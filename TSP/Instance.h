@@ -6,6 +6,8 @@
 #include <vector>
 #include <iomanip>
 
+#include "StringFunctions.h"
+
 using namespace std;
 
 class Instance
@@ -17,4 +19,8 @@ public:
 	Instance(string filename);
 	~Instance();
 	void Display();
+
+private:
+	int nint(double d);
+	double** parse_coords(vector<string> file, int i, int dimensions);
 };
