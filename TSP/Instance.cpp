@@ -302,7 +302,44 @@ Instance::Instance(string filename)
 		}
 		else if (edge_weight_type == "GEO")
 		{
-			throw new exception("not implemented");
+			double** coords = parse_coords(file, i, 2);
+
+			double* latitude = new double[size];
+			double* longitude = new double[size];
+
+			double PI = 3.141592;
+			double RRR = 6378.388;
+
+			//Convert to radians
+			for (int j = 0; j < size; j++)
+			{
+				double deg = (int)(coords[j][0]);
+				double min = coords[j][0] - deg;
+				latitude[j] = PI * (deg + 5.0 * min / 3.0) / 180.0;
+				deg = (int)(coords[j][1]);
+				min = coords[j][1] - deg;
+				longitude[j] = PI * (deg + 5.0 * min / 3.0) / 180.0;
+			}
+
+			//Calculate distance
+			for (int j = 0; j < size; j++)
+			{
+				for (int k = 0; k < size; k++)
+				{
+					if (j == k) { matrix[j][k] = -1; continue; }
+
+					double q1 = cos(longitude[j] - longitude[k]);
+					double q2 = cos(latitude[j] - latitude[k]);
+					double q3 = cos(latitude[j] + latitude[k]);
+
+					matrix[j][k] = (int)(RRR * acos(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3)) + 1.0);
+				}
+			}
+
+			for (int i = 0; i < size; i++) delete[] coords[i];
+			delete[] coords;
+			delete[] latitude;
+			delete[] longitude;
 		}
 		else if (edge_weight_type == "ATT")
 		{

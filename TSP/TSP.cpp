@@ -34,5 +34,9 @@ int main(int argc, char** argv)
                 cout << "Incorrect argument";
             }
         }
+
+        delete instance;
+
+        system("pause");
     }
 }
