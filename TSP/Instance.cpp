@@ -220,7 +220,24 @@ Instance::Instance(string filename)
 		}
 		else if (edge_weight_type == "MAX_3D")
 		{
-			throw new exception("not implemented");
+			double** coords = parse_coords(file, i, 3);
+
+			for (int j = 0; j < size; j++)
+			{
+				for (int k = 0; k < size; k++)
+				{
+					if (j == k) { matrix[j][k] = -1; continue; }
+
+					double xd = abs(coords[j][0] - coords[k][0]);
+					double yd = abs(coords[j][1] - coords[k][1]);
+					double zd = abs(coords[j][2] - coords[k][2]);
+
+					matrix[j][k] = max(nint(xd), nint(yd), nint(zd));
+				}
+			}
+
+			for (int i = 0; i < size; i++) delete[] coords[i];
+			delete[] coords;
 		}
 		else if (edge_weight_type == "MAN_2D")
 		{
@@ -300,4 +317,14 @@ double** Instance::parse_coords(vector<string> file, int i, int dimensions)
 	}
 
 	return coords;
+}
+
+int Instance::max(int i1, int i2)
+{
+	return i1 > i2 ? i1 : i2;
+}
+
+int Instance::max(int i1, int i2, int i3)
+{
+	return i1 > i2 ? i1 > i3 ? i1 : i2 : i2 > i3 ? i2 : i3;
 }
