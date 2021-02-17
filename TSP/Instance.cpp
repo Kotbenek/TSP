@@ -261,28 +261,44 @@ Instance::Instance(string filename)
 		}
 		else if (edge_weight_type == "MAN_3D")
 		{
-		double** coords = parse_coords(file, i, 3);
+			double** coords = parse_coords(file, i, 3);
 
-		for (int j = 0; j < size; j++)
-		{
-			for (int k = 0; k < size; k++)
+			for (int j = 0; j < size; j++)
 			{
-				if (j == k) { matrix[j][k] = -1; continue; }
+				for (int k = 0; k < size; k++)
+				{
+					if (j == k) { matrix[j][k] = -1; continue; }
 
-				double xd = abs(coords[j][0] - coords[k][0]);
-				double yd = abs(coords[j][1] - coords[k][1]);
-				double zd = abs(coords[j][2] - coords[k][2]);
+					double xd = abs(coords[j][0] - coords[k][0]);
+					double yd = abs(coords[j][1] - coords[k][1]);
+					double zd = abs(coords[j][2] - coords[k][2]);
 
-				matrix[j][k] = nint(xd + yd + zd);
+					matrix[j][k] = nint(xd + yd + zd);
+				}
 			}
-		}
 
-		for (int i = 0; i < size; i++) delete[] coords[i];
-		delete[] coords;
+			for (int i = 0; i < size; i++) delete[] coords[i];
+			delete[] coords;
 		}
 		else if (edge_weight_type == "CEIL_2D")
 		{
-			throw new exception("not implemented");
+			double** coords = parse_coords(file, i, 2);
+
+			for (int j = 0; j < size; j++)
+			{
+				for (int k = 0; k < size; k++)
+				{
+					if (j == k) { matrix[j][k] = -1; continue; }
+
+					double xd = coords[j][0] - coords[k][0];
+					double yd = coords[j][1] - coords[k][1];
+
+					matrix[j][k] = (int)ceil(sqrt(xd * xd + yd * yd));
+				}
+			}
+
+			for (int i = 0; i < size; i++) delete[] coords[i];
+			delete[] coords;
 		}
 		else if (edge_weight_type == "GEO")
 		{
