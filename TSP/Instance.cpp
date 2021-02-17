@@ -51,81 +51,77 @@ Instance::Instance(string filename)
 	//Parse data
 	if (edge_weight_type == "EXPLICIT")
 	{
-		for (int i = data_start; i < file.size(); i++)
-		{
-			if (file[i] == "EDGE_WEIGHT_SECTION")
-			{
-				i++;
+		//Move to the data section
+		int i = data_start;
+		while (file[i] != "EDGE_WEIGHT_SECTION") i++;
+		i++;
 
-				if (edge_weight_format == "FULL_MATRIX")
+		if (edge_weight_format == "FULL_MATRIX")
+		{
+			for (int j = 0; j < size; j++)
+			{
+				for (int k = 0; k < size; k++)
 				{
-					for (int j = 0; j < size; j++)
-					{
-						for (int k = 0; k < size; k++)
-						{
-							stringstream ss(file[i]);
-							ss >> matrix[j][k];
-							i++;
-						}
-					}
+					stringstream ss(file[i]);
+					ss >> matrix[j][k];
+					i++;
 				}
-				else if (edge_weight_format == "UPPER_ROW" || edge_weight_format == "LOWER_COL")
-				{
-					for (int j = 0; j < size - 1; j++)
-					{
-						for (int k = j + 1; k < size; k++)
-						{
-							stringstream ss(file[i]);
-							ss >> matrix[j][k];
-							matrix[k][j] = matrix[j][k];
-							i++;
-						}
-					}
-					for (int j = 0; j < size; j++) matrix[j][j] = -1;
-				}
-				else if (edge_weight_format == "LOWER_ROW" || edge_weight_format == "UPPER_COL")
-				{
-					for (int j = 1; j < size; j++)
-					{
-						for (int k = 0; k < j; k++)
-						{
-							stringstream ss(file[i]);
-							ss >> matrix[j][k];
-							matrix[k][j] = matrix[j][k];
-							i++;
-						}
-					}
-					for (int j = 0; j < size; j++) matrix[j][j] = -1;
-				}
-				else if (edge_weight_format == "UPPER_DIAG_ROW" || edge_weight_format == "LOWER_DIAG_COL")
-				{					
-					for (int j = 0; j < size; j++)
-					{
-						for (int k = j; k < size; k++)
-						{
-							stringstream ss(file[i]);
-							ss >> matrix[j][k];
-							matrix[k][j] = matrix[j][k];
-							i++;
-						}
-					}
-				}
-				else if (edge_weight_format == "LOWER_DIAG_ROW" || edge_weight_format == "UPPER_DIAG_COL")
-				{
-					for (int j = 0; j < size; j++)
-					{
-						for (int k = 0; k < j + 1; k++)
-						{
-							stringstream ss(file[i]);
-							ss >> matrix[j][k];
-							matrix[k][j] = matrix[j][k];
-							i++;
-						}
-					}
-				}
-				break;
 			}
-		}		
+		}
+		else if (edge_weight_format == "UPPER_ROW" || edge_weight_format == "LOWER_COL")
+		{
+			for (int j = 0; j < size - 1; j++)
+			{
+				for (int k = j + 1; k < size; k++)
+				{
+					stringstream ss(file[i]);
+					ss >> matrix[j][k];
+					matrix[k][j] = matrix[j][k];
+					i++;
+				}
+			}
+			for (int j = 0; j < size; j++) matrix[j][j] = -1;
+		}
+		else if (edge_weight_format == "LOWER_ROW" || edge_weight_format == "UPPER_COL")
+		{
+			for (int j = 1; j < size; j++)
+			{
+				for (int k = 0; k < j; k++)
+				{
+					stringstream ss(file[i]);
+					ss >> matrix[j][k];
+					matrix[k][j] = matrix[j][k];
+					i++;
+				}
+			}
+			for (int j = 0; j < size; j++) matrix[j][j] = -1;
+		}
+		else if (edge_weight_format == "UPPER_DIAG_ROW" || edge_weight_format == "LOWER_DIAG_COL")
+		{
+			for (int j = 0; j < size; j++)
+			{
+				for (int k = j; k < size; k++)
+				{
+					stringstream ss(file[i]);
+					ss >> matrix[j][k];
+					matrix[k][j] = matrix[j][k];
+					i++;
+				}
+			}
+		}
+		else if (edge_weight_format == "LOWER_DIAG_ROW" || edge_weight_format == "UPPER_DIAG_COL")
+		{
+			for (int j = 0; j < size; j++)
+			{
+				for (int k = 0; k < j + 1; k++)
+				{
+					stringstream ss(file[i]);
+					ss >> matrix[j][k];
+					matrix[k][j] = matrix[j][k];
+					i++;
+				}
+			}
+		}				
 	}
 	else if (edge_weight_type == "EUC_2D")
 	{
