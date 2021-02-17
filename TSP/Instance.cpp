@@ -2,6 +2,15 @@
 
 Instance::Instance(string filename)
 {
+	//Specification variables
+	string name;
+	string comment;
+	string type;
+	string dimension;
+	string edge_weight_type;
+	string edge_weight_format;
+	int data_start = 0;
+
 	//Read the file
 	ifstream f(filename);
 	if (f.fail()) { cout << "Something went wrong while loading the file." << "\r\n"; return; }
@@ -10,30 +19,45 @@ Instance::Instance(string filename)
 
 	while (getline(f, line))
 	{
-		stringstream ss(line);
-		string s;
-
-		while (getline(ss, s, ' '))
+		if (StringFunctions::starts_with(line, "NAME"))
 		{
-			if (s.length() > 0) file.push_back(s);				
+			name = StringFunctions::trim(StringFunctions::get_substring_after_char(line, ':'));
 		}
-	}
+		else if (StringFunctions::starts_with(line, "COMMENT"))
+		{
+			comment = StringFunctions::trim(StringFunctions::get_substring_after_char(line, ':'));
+		}
+		else if (StringFunctions::starts_with(line, "TYPE"))
+		{
+			type = StringFunctions::trim(StringFunctions::get_substring_after_char(line, ':'));
+		}
+		else if (StringFunctions::starts_with(line, "DIMENSION"))
+		{
+			dimension = StringFunctions::trim(StringFunctions::get_substring_after_char(line, ':'));
+		}
+		else if (StringFunctions::starts_with(line, "EDGE_WEIGHT_TYPE"))
+		{
+			edge_weight_type = StringFunctions::trim(StringFunctions::get_substring_after_char(line, ':'));
+		}
+		else if (StringFunctions::starts_with(line, "EDGE_WEIGHT_FORMAT"))
+		{
+			edge_weight_format = StringFunctions::trim(StringFunctions::get_substring_after_char(line, ':'));
+		}
+		else
+		{
+			stringstream ss(line);
+			string s;
 
-	//Extract specification
-	string name;
-	string dimension;
-	string edge_weight_type;
-	string edge_weight_format;
-	int data_start = 0;
+			while (getline(ss, s, ' '))
+			{
+				if (s.length() > 0) file.push_back(s);
+			}
+		}
+	}	
 
 	for (int i = 0; i < file.size(); i++)
 	{
-		if (file[i] == "NAME:") { name = file[i + 1]; i++; }
-		else if (file[i] == "DIMENSION:") { dimension = file[i + 1]; i++; }
-		else if (file[i] == "EDGE_WEIGHT_TYPE:") { edge_weight_type = file[i + 1]; i++; }
-		else if (file[i] == "EDGE_WEIGHT_FORMAT:") { edge_weight_format = file[i + 1]; i++; }
-
-		else if (file[i] == "NODE_COORD_SECTION" || file[i] == "EDGE_WEIGHT_SECTION") { data_start = i; break; }
+		if (file[i] == "NODE_COORD_SECTION" || file[i] == "EDGE_WEIGHT_SECTION") { data_start = i; break; }
 	}
 
 	//Store instance size
@@ -46,7 +70,10 @@ Instance::Instance(string filename)
 
 	//Display instance information
 	cout << "Instance: " << name << "\r\n";
+	cout << "Comment: " << comment << "\r\n";
+	cout << "Type: " << type << "\r\n";
 	cout << "Size: " << size << "\r\n";
+	cout << "\r\n";
 
 	//Parse data
 	if (edge_weight_type == "EXPLICIT")
@@ -123,45 +150,66 @@ Instance::Instance(string filename)
 			}
 		}				
 	}
-	else if (edge_weight_type == "EUC_2D")
-	{
-		throw new exception("not implemented");
-	}
-	else if (edge_weight_type == "EUC_3D")
-	{
-		throw new exception("not implemented");
-	}
-	else if (edge_weight_type == "MAX_2D")
-	{
-		throw new exception("not implemented");
-	}
-	else if (edge_weight_type == "MAX_3D")
-	{
-		throw new exception("not implemented");
-	}
-	else if (edge_weight_type == "MAN_2D")
-	{
-		throw new exception("not implemented");
-	}
-	else if (edge_weight_type == "MAN_3D")
-	{
-		throw new exception("not implemented");
-	}
-	else if (edge_weight_type == "CEIL_2D")
-	{
-		throw new exception("not implemented");
-	}
-	else if (edge_weight_type == "GEO")
-	{
-		throw new exception("not implemented");
-	}
-	else if (edge_weight_type == "ATT")
-	{
-		throw new exception("not implemented");
-	}
 	else
 	{
-		throw new exception("not implemented");
+		//Move to the data section
+		int i = data_start;
+		while (file[i] != "NODE_COORD_SECTION") i++;
+		i++;
+
+		if (edge_weight_type == "EUC_2D")
+		{
+			double** coords = parse_coords(file, i, 2);
+
+			for (int j = 0; j < size; j++)
+			{
+				for (int k = 0; k < size; k++)
+				{
+					if (j == k) { matrix[j][k] = -1; continue; }
+
+					double xd = coords[j][0] - coords[k][0];
+					double yd = coords[j][1] - coords[k][1];
+
+					matrix[j][k] = nint(sqrt(xd * xd + yd * yd));
+				}
+			}
+		}
+		else if (edge_weight_type == "EUC_3D")
+		{
+			throw new exception("not implemented");
+		}
+		else if (edge_weight_type == "MAX_2D")
+		{
+			throw new exception("not implemented");
+		}
+		else if (edge_weight_type == "MAX_3D")
+		{
+			throw new exception("not implemented");
+		}
+		else if (edge_weight_type == "MAN_2D")
+		{
+			throw new exception("not implemented");
+		}
+		else if (edge_weight_type == "MAN_3D")
+		{
+			throw new exception("not implemented");
+		}
+		else if (edge_weight_type == "CEIL_2D")
+		{
+			throw new exception("not implemented");
+		}
+		else if (edge_weight_type == "GEO")
+		{
+			throw new exception("not implemented");
+		}
+		else if (edge_weight_type == "ATT")
+		{
+			throw new exception("not implemented");
+		}
+		else
+		{
+			throw new exception("not implemented");
+		}
 	}
 }
 
@@ -186,4 +234,34 @@ void Instance::Display()
 		}
 		cout << "\r\n";
 	}
+}
+
+int Instance::nint(double d)
+{
+	return (int)(d + 0.5);
+}
+
+double** Instance::parse_coords(vector<string> file, int i, int dimensions)
+{
+	//Create 2D array for coords
+	double** coords = new double* [size];
+	for (int j = 0; j < size; j++) coords[j] = new double[dimensions];
+
+	//Parse coords
+	for (int j = 0; j < size; j++)
+	{
+		int index;
+		stringstream ss(file[i]);
+		ss >> index;
+		index--;
+		i++;
+		for (int k = 0; k < dimensions; k++)
+		{
+			stringstream ss(file[i]);
+			ss >> coords[index][k];
+			i++;
+		}
+	}
+
+	return coords;
 }
