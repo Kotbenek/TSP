@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "Instance.h"
 
 using namespace std;

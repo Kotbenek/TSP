@@ -8,10 +8,8 @@ Instance::Instance(string filename)
 	string line;
 	vector<string> file;
 
-	do
+	while (getline(f, line))
 	{
-		getline(f, line);
-
 		stringstream ss(line);
 		string s;
 
@@ -19,7 +17,7 @@ Instance::Instance(string filename)
 		{
 			if (s.length() > 0) file.push_back(s);				
 		}
-	} while (line.length() > 0);
+	}
 
 	//Extract specification
 	string name;
@@ -71,7 +69,7 @@ Instance::Instance(string filename)
 						}
 					}
 				}
-				else if (edge_weight_format == "UPPER_ROW" || edge_weight_format == "UPPER_COL")
+				else if (edge_weight_format == "UPPER_ROW" || edge_weight_format == "LOWER_COL")
 				{
 					for (int j = 0; j < size - 1; j++)
 					{
@@ -85,7 +83,7 @@ Instance::Instance(string filename)
 					}
 					for (int j = 0; j < size; j++) matrix[j][j] = -1;
 				}
-				else if (edge_weight_format == "LOWER_ROW" || edge_weight_format == "LOWER_COL")
+				else if (edge_weight_format == "LOWER_ROW" || edge_weight_format == "UPPER_COL")
 				{
 					for (int j = 1; j < size; j++)
 					{
@@ -99,7 +97,7 @@ Instance::Instance(string filename)
 					}
 					for (int j = 0; j < size; j++) matrix[j][j] = -1;
 				}
-				else if (edge_weight_format == "UPPER_DIAG_ROW" || edge_weight_format == "UPPER_DIAG_COL")
+				else if (edge_weight_format == "UPPER_DIAG_ROW" || edge_weight_format == "LOWER_DIAG_COL")
 				{					
 					for (int j = 0; j < size; j++)
 					{
@@ -112,7 +110,7 @@ Instance::Instance(string filename)
 						}
 					}
 				}
-				else if (edge_weight_format == "LOWER_DIAG_ROW" || edge_weight_format == "LOWER_DIAG_COL")
+				else if (edge_weight_format == "LOWER_DIAG_ROW" || edge_weight_format == "UPPER_DIAG_COL")
 				{
 					for (int j = 0; j < size; j++)
 					{
