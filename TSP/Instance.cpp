@@ -173,6 +173,9 @@ Instance::Instance(string filename)
 					matrix[j][k] = nint(sqrt(xd * xd + yd * yd));
 				}
 			}
+
+			for (int i = 0; i < size; i++) delete[] coords[i];
+			delete[] coords;
 		}
 		else if (edge_weight_type == "EUC_3D")
 		{
