@@ -343,7 +343,25 @@ Instance::Instance(string filename)
 		}
 		else if (edge_weight_type == "ATT")
 		{
-			throw new exception("not implemented");
+			double** coords = parse_coords(file, i, 2);
+
+			for (int j = 0; j < size; j++)
+			{
+				for (int k = 0; k < size; k++)
+				{
+					if (j == k) { matrix[j][k] = -1; continue; }
+
+					double xd = coords[j][0] - coords[k][0];
+					double yd = coords[j][1] - coords[k][1];
+					double r = sqrt((xd * xd + yd * yd) / 10.0);
+					int t = nint(r);
+					
+					matrix[j][k] = t < r ? t + 1 : t;
+				}
+			}
+
+			for (int i = 0; i < size; i++) delete[] coords[i];
+			delete[] coords;
 		}
 		else
 		{
