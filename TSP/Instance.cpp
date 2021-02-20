@@ -64,6 +64,8 @@ Instance::Instance(string filename)
 	stringstream ss(dimension);
 	ss >> size;
 
+	if (size < 0) { cout << "Bad instance size. File is corrupted and/or not supported." << "\r\n"; return; }
+
 	//Create matrix
 	matrix = new int* [size];
 	for (int i = 0; i < size; i++) matrix[i] = new int[size];
@@ -80,7 +82,7 @@ Instance::Instance(string filename)
 	{
 		//Move to the data section
 		int i = data_start;
-		while (file[i] != "EDGE_WEIGHT_SECTION") i++;
+		while (i < file.size() && file[i] != "EDGE_WEIGHT_SECTION") i++;
 		i++;
 
 		if (edge_weight_format == "FULL_MATRIX")
@@ -154,7 +156,7 @@ Instance::Instance(string filename)
 	{
 		//Move to the data section
 		int i = data_start;
-		while (file[i] != "NODE_COORD_SECTION") i++;
+		while (i < file.size() && file[i] != "NODE_COORD_SECTION") i++;
 		i++;
 
 		if (edge_weight_type == "EUC_2D")
@@ -365,7 +367,7 @@ Instance::Instance(string filename)
 		}
 		else
 		{
-			throw new exception("not implemented");
+			cout << "Edge weight type \"" << edge_weight_type << "\" is not supported." << "\r\n";
 		}
 	}
 }
