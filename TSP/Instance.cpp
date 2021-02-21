@@ -393,6 +393,7 @@ void Instance::Display()
 		}
 		cout << "\r\n";
 	}
+	cout << "\r\n";
 }
 
 int Instance::nint(double d)
