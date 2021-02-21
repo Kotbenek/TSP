@@ -14,13 +14,15 @@ class Instance
 {
 public:
 	int size = -1;
-	int** matrix;
-
+	
 	Instance(string filename);
 	~Instance();
-	void Display();
+	int edge_weight(int from, int to);
+	void display();
 
 private:
+	int** matrix;
+
 	int nint(double d);
 	double** parse_coords(vector<string> file, int i, int dimensions);
 	int max(int i1, int i2);

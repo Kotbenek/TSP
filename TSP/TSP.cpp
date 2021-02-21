@@ -29,7 +29,7 @@ int main(int argc, char** argv)
 
             if (arg == "-d")
             {
-                instance->Display();
+                instance->display();
             }
             else if (arg == "-gr")
             {

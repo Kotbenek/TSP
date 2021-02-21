@@ -24,14 +24,14 @@ void Algorithms::greedy(Instance* instance, int start)
 	while (unvisited_size > 0)
 	{
 		//Find the closest city from current location
-		int min = instance->matrix[current_location][unvisited[0]];
+		int min = instance->edge_weight(current_location, unvisited[0]);
 		int closest = 0;
 
 		for (int i = 1; i < unvisited_size; i++)
 		{
-			if (min > instance->matrix[current_location][unvisited[i]] && current_location != unvisited[i])
+			if (min > instance->edge_weight(current_location, unvisited[i]) && current_location != unvisited[i])
 			{
-				min = instance->matrix[current_location][unvisited[i]];
+				min = instance->edge_weight(current_location, unvisited[i]);
 				closest = i;
 			}
 		}
@@ -81,11 +81,11 @@ int Algorithms::compute_tour_length(Instance* instance, int* tour)
 	//Add edge weights (1)-(2), (2)-(3), ..., (n-1)-(n)
 	for (int i = 0; i < instance->size - 1; i++)
 	{
-		length += instance->matrix[tour[i]][tour[i + 1]];
+		length += instance->edge_weight(tour[i], tour[i + 1]);
 	}
 
 	//Add edge weight (n)-(0)
-	length += instance->matrix[tour[instance->size - 1]][tour[0]];
+	length += instance->edge_weight(tour[instance->size - 1], tour[0]);
 
 	return length;
 }
