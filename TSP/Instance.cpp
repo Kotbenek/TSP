@@ -381,7 +381,12 @@ Instance::~Instance()
 	}
 }
 
-void Instance::Display()
+int Instance::edge_weight(int from, int to)
+{
+	return matrix[from][to];
+}
+
+void Instance::display()
 {
 	cout.fill(' ');
 
@@ -389,7 +394,7 @@ void Instance::Display()
 	{
 		for (int j = 0; j < size; j++)
 		{
-			cout << setw(6) << matrix[i][j] << " ";
+			cout << setw(6) << edge_weight(i, j) << " ";
 		}
 		cout << "\r\n";
 	}
