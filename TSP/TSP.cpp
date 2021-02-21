@@ -1,4 +1,5 @@
 #include "Instance.h"
+#include "Algorithms.h"
 
 using namespace std;
 
@@ -7,13 +8,13 @@ int main(int argc, char** argv)
     if (argc < 3)
     {
         cout << "\r\n";
-        cout << "Usage: TSP.exe [-d] filename" << "\r\n";
-        cout << "               [TODO]" << "\r\n";
+        cout << "Usage: TSP.exe [-d] [-bf] filename" << "\r\n";
 
         cout << "\r\n";
 
         cout << "Options:" << "\r\n";
         cout << "    -d" << "         " << "Display the matrix" << "\r\n";
+        cout << "    -bf" << "        " << "Solve using brute force algorithm" << "\r\n";
     }
     else
     {
@@ -28,6 +29,10 @@ int main(int argc, char** argv)
             if (arg == "-d")
             {
                 instance->Display();
+            }
+            else if (arg == "-bf")
+            {
+                Algorithms::brute_force(instance);
             }
             else
             {
