@@ -3,7 +3,8 @@
 
 class Algorithms
 {
-public:	
+public:
+	static void greedy(Instance* instance, int start);
 	static void brute_force(Instance* instance);
 
 private:

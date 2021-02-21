@@ -1,5 +1,59 @@
 #include "Algorithms.h"
 
+void Algorithms::greedy(Instance* instance, int start)
+{
+	int* tour = new int[instance->size];
+	tour[0] = start;
+
+	//Unvisited cities array
+	int* unvisited = new int[instance->size - 1];
+	{
+		int index = 0;
+		for (int i = 0; i < instance->size; i++)
+		{
+			if (i == start) continue;
+			unvisited[index] = i;
+			index++;
+		}
+	}
+
+	int unvisited_size = instance->size - 1;	
+	int current_location = start;
+
+	//While there are cities to visit
+	while (unvisited_size > 0)
+	{
+		//Find the closest city from current location
+		int min = instance->matrix[current_location][unvisited[0]];
+		int closest = 0;
+
+		for (int i = 1; i < unvisited_size; i++)
+		{
+			if (min > instance->matrix[current_location][unvisited[i]] && current_location != unvisited[i])
+			{
+				min = instance->matrix[current_location][unvisited[i]];
+				closest = i;
+			}
+		}
+
+		//Add the closest city to the tour
+		tour[instance->size - unvisited_size] = unvisited[closest];
+
+		//Update current location
+		current_location = unvisited[closest];
+
+		//Remove visited city from the unvisited cities array
+		unvisited_size--;
+		swap(unvisited[closest], unvisited[unvisited_size]);
+		
+	}
+
+	display_tour(compute_tour_length(instance, tour), tour, instance->size);
+
+	delete[] tour;
+	delete[] unvisited;
+}
+
 void Algorithms::brute_force(Instance* instance)
 {
 	cout << "Brute force" << "\r\n";
