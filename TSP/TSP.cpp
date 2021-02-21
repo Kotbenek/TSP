@@ -36,7 +36,7 @@ int main(int argc, char** argv)
             }
             else
             {
-                cout << "Incorrect argument";
+                cout << "Incorrect argument \"" << arg << "\"" << "\r\n";
             }
         }
 
