@@ -8,13 +8,14 @@ int main(int argc, char** argv)
     if (argc < 3)
     {
         cout << "\r\n";
-        cout << "Usage: TSP.exe [-d] [-gr] [-bf] filename" << "\r\n";
+        cout << "Usage: TSP.exe [-d] [-gr] [-gr2] [-bf] filename" << "\r\n";
 
         cout << "\r\n";
 
         cout << "Options:" << "\r\n";
         cout << "    -d" << "         " << "Display the matrix" << "\r\n";
         cout << "    -gr" << "        " << "Solve using greedy algorithm" << "\r\n";
+        cout << "    -gr2" << "       " << "Solve using repetitive greedy algorithm" << "\r\n";
         cout << "    -bf" << "        " << "Solve using brute force algorithm" << "\r\n";
     }
     else
@@ -33,7 +34,11 @@ int main(int argc, char** argv)
             }
             else if (arg == "-gr")
             {
-                Algorithms::greedy(instance, 0);
+                Algorithms::greedy(instance, 0, true);
+            }
+            else if (arg == "-gr2")
+            {
+                Algorithms::repetitive_greedy(instance);
             }
             else if (arg == "-bf")
             {

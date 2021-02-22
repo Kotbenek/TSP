@@ -4,7 +4,8 @@
 class Algorithms
 {
 public:
-	static void greedy(Instance* instance, int start);
+	static int* greedy(Instance* instance, int start, bool display);
+	static void repetitive_greedy(Instance* instance);
 	static void brute_force(Instance* instance);
 
 private:
