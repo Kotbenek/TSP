@@ -1,7 +1,9 @@
 #include "Algorithms.h"
 
-void Algorithms::greedy(Instance* instance, int start)
+int* Algorithms::greedy(Instance* instance, int start, bool display)
 {
+	if (display) cout << "Greedy" << "\r\n";
+
 	int* tour = new int[instance->size];
 	tour[0] = start;
 
@@ -48,10 +50,43 @@ void Algorithms::greedy(Instance* instance, int start)
 		
 	}
 
-	display_tour(compute_tour_length(instance, tour), tour, instance->size);
+	if (display) display_tour(compute_tour_length(instance, tour), tour, instance->size);
 
-	delete[] tour;
+	if (display) delete[] tour;
 	delete[] unvisited;
+
+	return tour;
+}
+
+void Algorithms::repetitive_greedy(Instance* instance)
+{
+	cout << "Repetitive greedy" << "\r\n";
+
+	int* best_tour = greedy(instance, 0, false);
+	int best_tour_length = compute_tour_length(instance, best_tour);
+
+	int* tour;
+	int tour_length;
+
+	//Repeat the greedy algorithm for each city and choose the best tour
+	for (int i = 1; i < instance->size; i++)
+	{
+		tour = greedy(instance, i, false);
+		tour_length = compute_tour_length(instance, tour);
+
+		if (tour_length < best_tour_length)
+		{
+			for (int j = 0; j < instance->size; j++) best_tour[j] = tour[j];
+			
+			best_tour_length = tour_length;
+		}
+
+		delete[] tour;
+	}
+
+	display_tour(best_tour_length, best_tour, instance->size);
+
+	delete[] best_tour;
 }
 
 void Algorithms::brute_force(Instance* instance)
