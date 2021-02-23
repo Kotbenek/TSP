@@ -61,8 +61,7 @@ Instance::Instance(string filename)
 	}
 
 	//Store instance size
-	stringstream ss(dimension);
-	ss >> size;
+	StringFunctions::to_int(dimension, &size);
 
 	if (size < 0) { cout << "Bad instance size. File is corrupted and/or not supported." << "\r\n"; return; }
 
@@ -91,8 +90,7 @@ Instance::Instance(string filename)
 			{
 				for (int k = 0; k < size; k++)
 				{
-					stringstream ss(file[i]);
-					ss >> matrix[j][k];
+					StringFunctions::to_int(file[i], &matrix[j][k]);
 					i++;
 				}
 			}
@@ -103,8 +101,7 @@ Instance::Instance(string filename)
 			{
 				for (int k = j + 1; k < size; k++)
 				{
-					stringstream ss(file[i]);
-					ss >> matrix[j][k];
+					StringFunctions::to_int(file[i], &matrix[j][k]);
 					matrix[k][j] = matrix[j][k];
 					i++;
 				}
@@ -117,8 +114,7 @@ Instance::Instance(string filename)
 			{
 				for (int k = 0; k < j; k++)
 				{
-					stringstream ss(file[i]);
-					ss >> matrix[j][k];
+					StringFunctions::to_int(file[i], &matrix[j][k]);
 					matrix[k][j] = matrix[j][k];
 					i++;
 				}
@@ -131,8 +127,7 @@ Instance::Instance(string filename)
 			{
 				for (int k = j; k < size; k++)
 				{
-					stringstream ss(file[i]);
-					ss >> matrix[j][k];
+					StringFunctions::to_int(file[i], &matrix[j][k]);
 					matrix[k][j] = matrix[j][k];
 					i++;
 				}
@@ -144,8 +139,7 @@ Instance::Instance(string filename)
 			{
 				for (int k = 0; k < j + 1; k++)
 				{
-					stringstream ss(file[i]);
-					ss >> matrix[j][k];
+					StringFunctions::to_int(file[i], &matrix[j][k]);
 					matrix[k][j] = matrix[j][k];
 					i++;
 				}
@@ -416,14 +410,12 @@ double** Instance::parse_coords(vector<string> file, int i, int dimensions)
 	for (int j = 0; j < size; j++)
 	{
 		int index;
-		stringstream ss(file[i]);
-		ss >> index;
+		StringFunctions::to_int(file[i], &index);
 		index--;
 		i++;
 		for (int k = 0; k < dimensions; k++)
 		{
-			stringstream ss(file[i]);
-			ss >> coords[index][k];
+			StringFunctions::to_double(file[i], &coords[index][k]);
 			i++;
 		}
 	}

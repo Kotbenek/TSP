@@ -3,8 +3,6 @@
 
 int* Algorithms::greedy(Instance* instance, int start, bool display)
 {
-	if (display) cout << "Greedy" << "\r\n";
-
 	int* tour = new int[instance->size];
 	tour[0] = start;
 
@@ -61,8 +59,6 @@ int* Algorithms::greedy(Instance* instance, int start, bool display)
 
 void Algorithms::repetitive_greedy(Instance* instance)
 {
-	cout << "Repetitive greedy" << "\r\n";
-
 	int* best_tour = greedy(instance, 0, false);
 	int best_tour_length = compute_tour_length(instance, best_tour);
 
@@ -92,8 +88,6 @@ void Algorithms::repetitive_greedy(Instance* instance)
 
 void Algorithms::brute_force(Instance* instance)
 {
-	cout << "Brute force" << "\r\n";
-
 	//Prepare permutation array
 	int* a = new int[instance->size];
 	for (int i = 0; i < instance->size; i++) a[i] = i;
