@@ -141,12 +141,14 @@
   <ItemGroup>
     <ClCompile Include="Algorithms.cpp" />
     <ClCompile Include="Instance.cpp" />
+    <ClCompile Include="Random.cpp" />
     <ClCompile Include="StringFunctions.cpp" />
     <ClCompile Include="TSP.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithms.h" />
     <ClInclude Include="Instance.h" />
+    <ClInclude Include="Random.h" />
     <ClInclude Include="StringFunctions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
