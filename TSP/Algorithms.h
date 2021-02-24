@@ -10,6 +10,7 @@ public:
 	static void simulated_annealing(Instance* instance, double T_start, double T_end, int epoch_length, double cooling_factor, void (*neighbourhood_type)(int* tour, int i1, int i2));
 
 	static void neighbour_swap(int* tour, int i1, int i2);
+	static void neighbour_invert(int* tour, int i1, int i2);
 
 private:
 	static int compute_tour_length(Instance* instance, int* tour);

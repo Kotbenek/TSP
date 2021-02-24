@@ -180,6 +180,18 @@ void Algorithms::neighbour_swap(int* tour, int i1, int i2)
 	swap(tour[i1], tour[i2]);
 }
 
+void Algorithms::neighbour_invert(int* tour, int i1, int i2)
+{
+	if (i1 > i2) swap(i1, i2);
+
+	while (i1 < i2)
+	{
+		swap(tour[i1], tour[i2]);
+		i1++;
+		i2--;
+	}
+}
+
 int Algorithms::compute_tour_length(Instance* instance, int* tour)
 {
 	int length = 0;

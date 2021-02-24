@@ -27,6 +27,7 @@ int main(int argc, char** argv)
         cout << "\r\n";
         cout << "Neighbourhood types:" << "\r\n";
         cout << "    swp" << "        " << "Swap" << "\r\n";
+        cout << "    inv" << "        " << "Invert" << "\r\n";
     }
     else
     {
@@ -106,10 +107,8 @@ int main(int argc, char** argv)
                     continue;
                 }
 
-                if (nt == "swp")
-                {
-                    neighbourhood_type = &Algorithms::neighbour_swap;
-                }
+                if (nt == "swp") neighbourhood_type = &Algorithms::neighbour_swap;
+                else if (nt == "inv") neighbourhood_type = &Algorithms::neighbour_invert;
                 else
                 {
                     cout << "Bad neighbourhood type \"" << nt << "\"." << "\r\n";
