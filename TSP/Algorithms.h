@@ -11,6 +11,7 @@ public:
 
 	static void neighbour_swap(int* tour, int i1, int i2);
 	static void neighbour_invert(int* tour, int i1, int i2);
+	static void neighbour_insert(int* tour, int i1, int i2);
 
 private:
 	static int compute_tour_length(Instance* instance, int* tour);
