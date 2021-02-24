@@ -192,6 +192,15 @@ void Algorithms::neighbour_invert(int* tour, int i1, int i2)
 	}
 }
 
+void Algorithms::neighbour_insert(int* tour, int i1, int i2)
+{
+	if (i1 > i2) swap(i1, i2);
+
+	int temp = tour[i2];
+	copy(&tour[i1], &tour[i2], &tour[i1 + 1]);
+	tour[i1] = temp;
+}
+
 int Algorithms::compute_tour_length(Instance* instance, int* tour)
 {
 	int length = 0;
@@ -263,7 +272,7 @@ int* Algorithms::generate_random_tour(int size)
 	int* unvisited = new int[unvisited_size];
 	for (int i = 0; i < unvisited_size; i++) unvisited[i] = i + 1;
 
-	while (unvisited_size > 1)
+	while (unvisited_size > 0)
 	{
 		int index = Random::next(unvisited_size - 1);
 		tour[size - unvisited_size] = unvisited[index];
@@ -272,7 +281,6 @@ int* Algorithms::generate_random_tour(int size)
 		unvisited_size--;
 		swap(unvisited[index], unvisited[unvisited_size]);
 	}
-	tour[size - 1] = unvisited[0];
 
 	delete[] unvisited;
 
