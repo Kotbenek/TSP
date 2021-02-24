@@ -49,7 +49,7 @@ int* Algorithms::greedy(Instance* instance, int start, bool display)
 		
 	}
 
-	if (display) display_tour(compute_tour_length(instance, tour), tour, instance->size);
+	if (display) display_tour(compute_tour_length(instance, tour), instance->optimal_tour_length, tour, instance->size);
 
 	if (display) delete[] tour;
 	delete[] unvisited;
@@ -81,7 +81,7 @@ void Algorithms::repetitive_greedy(Instance* instance)
 		delete[] tour;
 	}
 
-	display_tour(best_tour_length, best_tour, instance->size);
+	display_tour(best_tour_length, instance->optimal_tour_length, best_tour, instance->size);
 
 	delete[] best_tour;
 }
@@ -98,7 +98,7 @@ void Algorithms::brute_force(Instance* instance)
 
 	permute(instance, a, 1, instance->size, &best_tour_length, best_tour);
 
-	display_tour(best_tour_length, best_tour, instance->size);
+	display_tour(best_tour_length, instance->optimal_tour_length, best_tour, instance->size);
 
 	delete[] a;
 	delete[] best_tour;
@@ -112,7 +112,7 @@ void Algorithms::simulated_annealing(Instance* instance, double T_start, double 
 	//Temperature
 	double T = T_start;
 
-	display_tour_length(tour_length);
+	display_tour_length(tour_length, instance->optimal_tour_length);
 
 	int* new_tour = new int[instance->size];
 	int new_tour_length;
@@ -148,7 +148,7 @@ void Algorithms::simulated_annealing(Instance* instance, double T_start, double 
 					copy(&new_tour[0], &new_tour[instance->size], best_tour);
 					best_tour_length = new_tour_length;
 
-					display_tour_length(best_tour_length);
+					display_tour_length(best_tour_length, instance->optimal_tour_length);
 				}
 			}
 			else
@@ -168,7 +168,7 @@ void Algorithms::simulated_annealing(Instance* instance, double T_start, double 
 		T = T * cooling_factor;
 	}
 
-	display_tour(best_tour_length, best_tour, instance->size);
+	display_tour(best_tour_length, instance->optimal_tour_length, best_tour, instance->size);
 
 	delete[] tour;
 	delete[] new_tour;
@@ -217,12 +217,14 @@ int Algorithms::compute_tour_length(Instance* instance, int* tour)
 	return length;
 }
 
-void Algorithms::display_tour_length(int tour_length)
+void Algorithms::display_tour_length(int tour_length, int optimal_tour_length)
 {
-	cout << tour_length << "\r\n";
+	cout << tour_length;
+	if (optimal_tour_length > -1) cout << " (" << fixed << setprecision(2) << (100.0 * tour_length / optimal_tour_length) << "%)";
+	cout << "\r\n";
 }
 
-void Algorithms::display_tour(int tour_length, int* tour, int size)
+void Algorithms::display_tour(int tour_length, int optimal_tour_length, int* tour, int size)
 {
 	cout << "Tour: ";
 	for (int i = 0; i < size - 1; i++)
@@ -231,7 +233,9 @@ void Algorithms::display_tour(int tour_length, int* tour, int size)
 	}
 	cout << tour[size - 1] + 1 << "\r\n";
 
-	cout << "Tour length: " << tour_length << "\r\n" << "\r\n";
+	cout << "Tour length: ";
+	display_tour_length(tour_length, optimal_tour_length);
+	cout << "\r\n";
 }
 
 void Algorithms::permute(Instance* instance, int* a, int l, int r, int* best_tour_length, int* best_tour)
@@ -248,7 +252,7 @@ void Algorithms::permute(Instance* instance, int* a, int l, int r, int* best_tou
 			*best_tour_length = tour_length;
 			copy(&a[0], &a[instance->size], best_tour);
 
-			display_tour_length(tour_length);
+			display_tour_length(tour_length, instance->optimal_tour_length);
 		}
 	}
 	else

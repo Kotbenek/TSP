@@ -364,6 +364,8 @@ Instance::Instance(string filename)
 			cout << "Edge weight type \"" << edge_weight_type << "\" is not supported." << "\r\n";
 		}
 	}
+
+	load_optimal_tour_length(filename + ".opt");
 }
 
 Instance::~Instance()
@@ -431,4 +433,16 @@ int Instance::max(int i1, int i2)
 int Instance::max(int i1, int i2, int i3)
 {
 	return i1 > i2 ? i1 > i3 ? i1 : i2 : i2 > i3 ? i2 : i3;
+}
+
+void Instance::load_optimal_tour_length(string filename)
+{
+	//Check if the file with optimal path length exists
+	//If true, read the file and store the value
+	ifstream f(filename);
+	if (f.fail()) return;
+
+	string line;
+	getline(f, line);
+	StringFunctions::to_int(line, &optimal_tour_length);
 }
