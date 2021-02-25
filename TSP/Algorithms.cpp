@@ -219,9 +219,15 @@ int Algorithms::compute_tour_length(Instance* instance, int* tour)
 
 void Algorithms::display_tour_length(int tour_length, int optimal_tour_length)
 {
+	//Save cout flags
+	ios_base::fmtflags f(cout.flags());
+
 	cout << tour_length;
 	if (optimal_tour_length > -1) cout << " (" << fixed << setprecision(2) << (100.0 * tour_length / optimal_tour_length) << "%)";
 	cout << "\r\n";
+
+	//Restore cout flags
+	cout.flags(f);
 }
 
 void Algorithms::display_tour(int tour_length, int optimal_tour_length, int* tour, int size)
