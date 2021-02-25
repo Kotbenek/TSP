@@ -384,6 +384,9 @@ int Instance::edge_weight(int from, int to)
 
 void Instance::display()
 {
+	//Save cout flags
+	ios_base::fmtflags f(cout.flags());
+
 	cout.fill(' ');
 
 	for (int i = 0; i < size; i++)
@@ -395,6 +398,9 @@ void Instance::display()
 		cout << "\r\n";
 	}
 	cout << "\r\n";
+
+	//Restore cout flags
+	cout.flags(f);
 }
 
 int Instance::nint(double d)
