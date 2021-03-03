@@ -1,5 +1,6 @@
 #include "Algorithms.h"
 #include "Random.h"
+#include "Individual.h"
 
 int* Algorithms::greedy(Instance* instance, int start, bool display)
 {
@@ -175,6 +176,150 @@ void Algorithms::simulated_annealing(Instance* instance, double T_start, double 
 	delete[] best_tour;
 }
 
+void Algorithms::genetic(Instance* instance, int population_size, int max_iterations_with_no_improvement, double mutation_factor, double crossover_factor, int percentage_of_population_to_crossover)
+{
+	//Generate population - 5% greedy, 95% random
+	Individual** population = new Individual * [population_size];
+
+	int* greedy = Algorithms::greedy(instance, 0, false);
+	for (int i = 0; i < 5 * population_size / 100; i++)
+	{
+		population[i] = new Individual(instance->size, greedy);
+	}
+	delete[] greedy;
+
+	for (int i = 5 * population_size / 100; i < population_size; i++)
+	{
+		int* t = Algorithms::generate_random_tour(instance->size);
+		population[i] = new Individual(instance->size, t);
+		delete[] t;
+	}
+
+	Individual* best_individual = Individual::clone(population[0], instance->size);
+	int best_individual_tour_length = compute_tour_length(instance, best_individual->tour);
+
+	display_tour_length(best_individual_tour_length, instance->optimal_tour_length);
+
+	int iterations_with_no_improvement = 0;
+	int parents_size = percentage_of_population_to_crossover * population_size / 100;
+	int tournament_participants_size = parents_size * 8 > population_size ? population_size / parents_size : 8;
+
+	int* population_picker_template = new int[population_size];
+	for (int i = 0; i < population_size; i++) population_picker_template[i] = i;
+
+	int population_with_children_size = population_size + 2 * parents_size;
+
+	while (true)
+	{
+		//Calculate fitness
+		for (int i = 0; i < population_size; i++) calculate_fitness(population[i], instance);
+
+		//Stop condition
+		if (iterations_with_no_improvement == max_iterations_with_no_improvement) break;
+
+		//Selection
+		int* parents = new int[parents_size];
+		int* population_picker = new int[population_size];
+		int individuals_picked = 0;
+		copy(&population_picker_template[0], &population_picker_template[population_size], population_picker);
+		random_shuffle_array(population_picker, population_size);
+		for (int i = 0; i < parents_size; i++)
+		{
+			int best = 0;
+			double best_value = population[population_picker[i * tournament_participants_size]]->fitness;
+			for (int j = 1; j < tournament_participants_size; j++)
+			{
+				if (population[population_picker[i * tournament_participants_size + j]]->fitness > best_value)
+				{
+					best = j;
+					best_value = population[population_picker[i * tournament_participants_size + j]]->fitness;
+				}
+			}
+			parents[individuals_picked] = population_picker[i * tournament_participants_size + best];
+			individuals_picked++;
+		}
+		
+		//Crossover
+		Individual** population_with_children = new Individual * [population_with_children_size];
+
+		copy(&population[0], &population[population_size], population_with_children);
+
+		for (int i = 0; i < parents_size; i++)
+		{
+			double p = Random::next_double();
+
+			Individual** children;
+
+			if (p < crossover_factor)
+			{
+				children = Individual::crossover_OX(population[parents[i]], population[parents[(i + 1) % parents_size]], instance->size);
+				calculate_fitness(children[0], instance);
+				calculate_fitness(children[1], instance);
+			}
+			else
+			{
+				children = new Individual * [2];
+				children[0] = Individual::clone(population[parents[i]], instance->size);
+				children[1] = Individual::clone(population[parents[(i + 1) % parents_size]], instance->size);
+			}
+			population_with_children[population_size + 2 * i] = children[0];
+			population_with_children[population_size + 2 * i + 1] = children[1];
+
+			delete[] children;
+		}
+		delete[] parents;
+		delete[] population_picker;
+
+		//Mutation
+		for (int i = 0; i < population_with_children_size; i++)
+		{
+			double p = Random::next_double();
+			if (p < mutation_factor)
+			{
+				if (Random::next(1) == 0)
+				{
+					neighbour_invert(population_with_children[i]->tour, Random::next(instance->size - 1), Random::next(instance->size - 1));
+				}
+				else
+				{
+					neighbour_insert(population_with_children[i]->tour, Random::next(instance->size - 1), Random::next(instance->size - 1));
+				}
+			}
+		}
+
+		//Sort by fitness descending
+		Individual::quicksort_desc(population_with_children, 0, population_with_children_size - 1);
+
+		//Make new population
+		copy(&population_with_children[0], &population_with_children[population_size], population);
+
+		//Delete unused individuals
+		for (int i = population_size; i < population_with_children_size; i++) delete population_with_children[i];
+		delete[] population_with_children;
+
+		//Check if better solution is found
+		int best_in_population_tour_length = compute_tour_length(instance, population[0]->tour);
+		if (best_individual_tour_length > best_in_population_tour_length)
+		{
+			delete best_individual;
+
+			best_individual = Individual::clone(population[0], instance->size);
+			best_individual_tour_length = best_in_population_tour_length;
+			iterations_with_no_improvement = 0;
+			display_tour_length(best_individual_tour_length, instance->optimal_tour_length);
+		}
+		else iterations_with_no_improvement++;		
+	}
+
+	display_tour(best_individual_tour_length, instance->optimal_tour_length, best_individual->tour, instance->size);
+
+	for (int i = 0; i < population_size; i++) delete population[i];
+	delete[] population;
+
+	delete best_individual;
+	delete[] population_picker_template;
+}
+
 void Algorithms::neighbour_swap(int* tour, int i1, int i2)
 {
 	swap(tour[i1], tour[i2]);
@@ -296,3 +441,14 @@ int* Algorithms::generate_random_tour(int size)
 
 	return tour;
 }
+
+void Algorithms::random_shuffle_array(int* a, int size)
+{
+	for (int i = size - 1; i > 0; i--) swap(a[i], a[Random::next(i)]);	
+}
+
+void Algorithms::calculate_fitness(Individual* individual, Instance* instance)
+{
+	individual->fitness = 1000000.0 / (double)compute_tour_length(instance, individual->tour);
+}
+
