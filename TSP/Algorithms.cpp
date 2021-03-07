@@ -284,6 +284,7 @@ void Algorithms::genetic(Instance* instance, int population_size, int max_iterat
 				{
 					neighbour_insert(population_with_children[i]->tour, Random::next(instance->size - 1), Random::next(instance->size - 1));
 				}
+				calculate_fitness(population_with_children[i], instance);
 			}
 		}
 
