@@ -209,11 +209,11 @@ void Algorithms::genetic(Instance* instance, int population_size, int max_iterat
 
 	int population_with_children_size = population_size + 2 * parents_size;
 
+	//Calculate fitness
+	for (int i = 0; i < population_size; i++) calculate_fitness(population[i], instance);
+
 	while (true)
 	{
-		//Calculate fitness
-		for (int i = 0; i < population_size; i++) calculate_fitness(population[i], instance);
-
 		//Stop condition
 		if (iterations_with_no_improvement == max_iterations_with_no_improvement) break;
 
