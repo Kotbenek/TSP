@@ -21,6 +21,11 @@ bool StringFunctions::to_int(string input, int* output)
     return convert(input, output);
 }
 
+bool StringFunctions::to_int64(string input, int64_t* output)
+{
+    return convert(input, output);
+}
+
 bool StringFunctions::to_double(string input, double* output)
 {
     return convert(input, output);

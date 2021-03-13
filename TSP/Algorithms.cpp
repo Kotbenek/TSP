@@ -61,10 +61,10 @@ int* Algorithms::greedy(Instance* instance, int start, bool display)
 void Algorithms::repetitive_greedy(Instance* instance)
 {
 	int* best_tour = greedy(instance, 0, false);
-	int best_tour_length = compute_tour_length(instance, best_tour);
+	int64_t best_tour_length = compute_tour_length(instance, best_tour);
 
 	int* tour;
-	int tour_length;
+	int64_t tour_length;
 
 	//Repeat the greedy algorithm for each city and choose the best tour
 	for (int i = 1; i < instance->size; i++)
@@ -94,7 +94,7 @@ void Algorithms::brute_force(Instance* instance)
 	for (int i = 0; i < instance->size; i++) a[i] = i;
 
 	//Variables for storing the best found tour
-	int best_tour_length = INT32_MAX;
+	int64_t best_tour_length = INT64_MAX;
 	int* best_tour = new int[instance->size];
 
 	permute(instance, a, 1, instance->size, &best_tour_length, best_tour);
@@ -108,7 +108,7 @@ void Algorithms::brute_force(Instance* instance)
 void Algorithms::simulated_annealing(Instance* instance, double T_start, double T_end, int epoch_length, double cooling_factor, void (*neighbourhood_type)(int* tour, int i1, int i2))
 {
 	int* tour = generate_random_tour(instance->size);
-	int tour_length = compute_tour_length(instance, tour);
+	int64_t tour_length = compute_tour_length(instance, tour);
 	
 	//Temperature
 	double T = T_start;
@@ -116,11 +116,11 @@ void Algorithms::simulated_annealing(Instance* instance, double T_start, double 
 	display_tour_length(tour_length, instance->optimal_tour_length);
 
 	int* new_tour = new int[instance->size];
-	int new_tour_length;
+	int64_t new_tour_length;
 
 	int* best_tour = new int[instance->size];
 	copy(&tour[0], &tour[instance->size], best_tour);
-	int best_tour_length = tour_length;
+	int64_t best_tour_length = tour_length;
 
 	//While the temperature is higher than minimal temperature
 	while (T > T_end)
@@ -133,7 +133,7 @@ void Algorithms::simulated_annealing(Instance* instance, double T_start, double 
 			neighbourhood_type(new_tour, Random::next(instance->size - 1), Random::next(instance->size - 1));
 			new_tour_length = compute_tour_length(instance, new_tour);
 
-			int delta = new_tour_length - tour_length;
+			int64_t delta = new_tour_length - tour_length;
 
 			//If new tour is better than current tour
 			if (delta < 0)
@@ -196,7 +196,7 @@ void Algorithms::genetic(Instance* instance, int population_size, int max_iterat
 	}
 
 	Individual* best_individual = Individual::clone(population[0], instance->size);
-	int best_individual_tour_length = compute_tour_length(instance, best_individual->tour);
+	int64_t best_individual_tour_length = compute_tour_length(instance, best_individual->tour);
 
 	display_tour_length(best_individual_tour_length, instance->optimal_tour_length);
 
@@ -299,7 +299,7 @@ void Algorithms::genetic(Instance* instance, int population_size, int max_iterat
 		delete[] population_with_children;
 
 		//Check if better solution is found
-		int best_in_population_tour_length = compute_tour_length(instance, population[0]->tour);
+		int64_t best_in_population_tour_length = compute_tour_length(instance, population[0]->tour);
 		if (best_individual_tour_length > best_in_population_tour_length)
 		{
 			delete best_individual;
@@ -347,9 +347,9 @@ void Algorithms::neighbour_insert(int* tour, int i1, int i2)
 	tour[i1] = temp;
 }
 
-int Algorithms::compute_tour_length(Instance* instance, int* tour)
+int64_t Algorithms::compute_tour_length(Instance* instance, int* tour)
 {
-	int length = 0;
+	int64_t length = 0;
 
 	//Add edge weights (1)-(2), (2)-(3), ..., (n-1)-(n)
 	for (int i = 0; i < instance->size - 1; i++)
@@ -363,7 +363,7 @@ int Algorithms::compute_tour_length(Instance* instance, int* tour)
 	return length;
 }
 
-void Algorithms::display_tour_length(int tour_length, int optimal_tour_length)
+void Algorithms::display_tour_length(int64_t tour_length, int64_t optimal_tour_length)
 {
 	//Save cout flags
 	ios_base::fmtflags f(cout.flags());
@@ -376,7 +376,7 @@ void Algorithms::display_tour_length(int tour_length, int optimal_tour_length)
 	cout.flags(f);
 }
 
-void Algorithms::display_tour(int tour_length, int optimal_tour_length, int* tour, int size)
+void Algorithms::display_tour(int64_t tour_length, int64_t optimal_tour_length, int* tour, int size)
 {
 	cout << "Tour: ";
 	for (int i = 0; i < size - 1; i++)
@@ -390,12 +390,12 @@ void Algorithms::display_tour(int tour_length, int optimal_tour_length, int* tou
 	cout << "\r\n";
 }
 
-void Algorithms::permute(Instance* instance, int* a, int l, int r, int* best_tour_length, int* best_tour)
+void Algorithms::permute(Instance* instance, int* a, int l, int r, int64_t* best_tour_length, int* best_tour)
 {
 	if (l == r)
 	{
 		//Check generated permutation
-		int tour_length = compute_tour_length(instance, a);
+		int64_t tour_length = compute_tour_length(instance, a);
 
 		//If generated permutation is better than the best found tour
 		if (tour_length < *best_tour_length)

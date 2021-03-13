@@ -6,10 +6,10 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    if (argc < 3)
+    if (argc < 4)
     {
         cout << "\r\n";
-        cout << "Usage: TSP.exe [-d] [-gr] [-gr2] [-bf] [-sa T1 T2 el cf nt] [-ga ps mi mf cf pc] filename" << "\r\n";
+        cout << "Usage: TSP.exe [-d] [-gr] [-gr2] [-bf] [-sa t1 t2 el cf nt] [-ga ps mi mf cf pc] -f1|-f2 filename" << "\r\n";
 
         cout << "\r\n";
 
@@ -30,21 +30,34 @@ int main(int argc, char** argv)
         cout << "       mf" << "         " << "Mutation factor" << "\r\n";
         cout << "       cf" << "         " << "Crossover factor" << "\r\n";
         cout << "       pc" << "         " << "Percentage of population to crossover" << "\r\n";
+
         cout << "\r\n";
+
         cout << "Neighbourhood types:" << "\r\n";
         cout << "    swp" << "        " << "Swap" << "\r\n";
         cout << "    inv" << "        " << "Invert" << "\r\n";
         cout << "    ins" << "        " << "Insert" << "\r\n";
+
+        cout << "\r\n";
+
+        cout << "File loading:" << "\r\n";
+        cout << "    -f1" << "        " << "Load the file as matrix (faster, but needs more memory)" << "\r\n";
+        cout << "    -f2" << "        " << "Load the file as coords (slower, but needs very little memory)(not available for explicit-type instances)" << "\r\n";
+        cout << "    filename" << "   " << "Instance file in TSPLIB format" << "\r\n";
     }
     else
     {
         Random::init();
 
         string filename = argv[argc - 1];
-        Instance* instance = new Instance(filename);
+        string file_loading = argv[argc - 2];
+        Instance* instance;
+        if (file_loading == "-f1") instance = new Instance(filename, true);
+        else if (file_loading == "-f2") instance = new Instance(filename, false);
+        else { cout << "Bad argument -f1|-f2: \"" << file_loading << "\"." << "\r\n"; return -1; }
         if (instance->size == -1) return -1;
 
-        for (int i = 1; i < argc - 1; i++)
+        for (int i = 1; i < argc - 2; i++)
         {
             string arg = argv[i];
 
@@ -71,7 +84,7 @@ int main(int argc, char** argv)
             {
                 cout << "Simulated annealing" << "\r\n";
 
-                if (argc - 2 - i < 5)
+                if (argc - 3 - i < 5)
                 {
                     cout << "Not enough arguments for \"-sa\"." << "\r\n";
                     break;
@@ -136,7 +149,7 @@ int main(int argc, char** argv)
             {
                 cout << "Genetic algorithm" << "\r\n";
 
-                if (argc - 2 - i < 5)
+                if (argc - 3 - i < 5)
                 {
                     cout << "Not enough arguments for \"-ga\"." << "\r\n";
                     break;
