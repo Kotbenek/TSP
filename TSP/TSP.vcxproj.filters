@@ -50,5 +50,8 @@
     <ClInclude Include="Individual.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CoordsWeightType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

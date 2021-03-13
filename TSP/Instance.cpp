@@ -1,6 +1,6 @@
 #include "Instance.h"
 
-Instance::Instance(string filename)
+Instance::Instance(string filename, bool parse_data_to_matrix)
 {
 	//Specification variables
 	string name;
@@ -65,9 +65,15 @@ Instance::Instance(string filename)
 
 	if (size < 0) { cout << "Bad instance size. File is corrupted and/or not supported." << "\r\n"; return; }
 
-	//Create matrix
-	matrix = new int* [size];
-	for (int i = 0; i < size; i++) matrix[i] = new int[size];
+	//Store the information if instance data is stored as matrix or as coords
+	is_instance_data_in_matrix = parse_data_to_matrix;
+
+	if (is_instance_data_in_matrix)
+	{
+		//Create matrix
+		matrix = new int* [size];
+		for (int i = 0; i < size; i++) matrix[i] = new int[size];
+	}	
 
 	//Display instance information
 	cout << "Instance: " << name << "\r\n";
@@ -79,6 +85,9 @@ Instance::Instance(string filename)
 	//Parse data
 	if (edge_weight_type == "EXPLICIT")
 	{
+		//Storing explicit-type instances as coords is not possible
+		if (!is_instance_data_in_matrix) { cout << "Explicit-type instances cannot be stored as coords." << "\r\n"; size = -1; return; }
+	
 		//Move to the data section
 		int i = data_start;
 		while (i < file.size() && file[i] != "EDGE_WEIGHT_SECTION") i++;
@@ -152,216 +161,180 @@ Instance::Instance(string filename)
 		int i = data_start;
 		while (i < file.size() && file[i] != "NODE_COORD_SECTION") i++;
 		i++;
-
+		
 		if (edge_weight_type == "EUC_2D")
 		{
-			double** coords = parse_coords(file, i, 2);
+			coords = parse_coords(file, i, 2);
+			coords_weight_type = CoordsWeightType::EUC_2D;
 
-			for (int j = 0; j < size; j++)
+			if (is_instance_data_in_matrix)
 			{
-				for (int k = 0; k < size; k++)
+				for (int j = 0; j < size; j++)
 				{
-					if (j == k) { matrix[j][k] = -1; continue; }
-
-					double xd = coords[j][0] - coords[k][0];
-					double yd = coords[j][1] - coords[k][1];
-
-					matrix[j][k] = nint(sqrt(xd * xd + yd * yd));
+					for (int k = 0; k < size; k++)
+					{
+						matrix[j][k] = euc_2d_distance(j, k);
+					}
 				}
-			}
 
-			for (int i = 0; i < size; i++) delete[] coords[i];
-			delete[] coords;
+				for (int i = 0; i < size; i++) delete[] coords[i];
+				delete[] coords;
+			}
 		}
 		else if (edge_weight_type == "EUC_3D")
 		{
-			double** coords = parse_coords(file, i, 3);
+			coords = parse_coords(file, i, 3);
+			coords_weight_type = CoordsWeightType::EUC_3D;
 
-			for (int j = 0; j < size; j++)
+			if (is_instance_data_in_matrix)
 			{
-				for (int k = 0; k < size; k++)
+				for (int j = 0; j < size; j++)
 				{
-					if (j == k) { matrix[j][k] = -1; continue; }
-
-					double xd = coords[j][0] - coords[k][0];
-					double yd = coords[j][1] - coords[k][1];
-					double zd = coords[j][2] - coords[k][2];
-
-					matrix[j][k] = nint(sqrt(xd * xd + yd * yd + zd * zd));
+					for (int k = 0; k < size; k++)
+					{
+						matrix[j][k] = euc_3d_distance(j, k);
+					}
 				}
-			}
 
-			for (int i = 0; i < size; i++) delete[] coords[i];
-			delete[] coords;
+				for (int i = 0; i < size; i++) delete[] coords[i];
+				delete[] coords;
+			}
 		}
 		else if (edge_weight_type == "MAX_2D")
 		{
-			double** coords = parse_coords(file, i, 2);
+			coords = parse_coords(file, i, 2);
+			coords_weight_type = CoordsWeightType::MAX_2D;
 
-			for (int j = 0; j < size; j++)
+			if (is_instance_data_in_matrix)
 			{
-				for (int k = 0; k < size; k++)
+				for (int j = 0; j < size; j++)
 				{
-					if (j == k) { matrix[j][k] = -1; continue; }
-
-					double xd = abs(coords[j][0] - coords[k][0]);
-					double yd = abs(coords[j][1] - coords[k][1]);
-
-					matrix[j][k] = max(nint(xd), nint(yd));
+					for (int k = 0; k < size; k++)
+					{
+						matrix[j][k] = max_2d_distance(j, k);
+					}
 				}
-			}
 
-			for (int i = 0; i < size; i++) delete[] coords[i];
-			delete[] coords;
+				for (int i = 0; i < size; i++) delete[] coords[i];
+				delete[] coords;
+			}
 		}
 		else if (edge_weight_type == "MAX_3D")
 		{
-			double** coords = parse_coords(file, i, 3);
+			coords = parse_coords(file, i, 3);
+			coords_weight_type = CoordsWeightType::MAX_3D;
 
-			for (int j = 0; j < size; j++)
+			if (is_instance_data_in_matrix)
 			{
-				for (int k = 0; k < size; k++)
+				for (int j = 0; j < size; j++)
 				{
-					if (j == k) { matrix[j][k] = -1; continue; }
-
-					double xd = abs(coords[j][0] - coords[k][0]);
-					double yd = abs(coords[j][1] - coords[k][1]);
-					double zd = abs(coords[j][2] - coords[k][2]);
-
-					matrix[j][k] = max(nint(xd), nint(yd), nint(zd));
+					for (int k = 0; k < size; k++)
+					{
+						matrix[j][k] = max_3d_distance(j, k);
+					}
 				}
-			}
 
-			for (int i = 0; i < size; i++) delete[] coords[i];
-			delete[] coords;
+				for (int i = 0; i < size; i++) delete[] coords[i];
+				delete[] coords;
+			}
 		}
 		else if (edge_weight_type == "MAN_2D")
 		{
-			double** coords = parse_coords(file, i, 2);
+			coords = parse_coords(file, i, 2);
+			coords_weight_type = CoordsWeightType::MAN_2D;
 
-			for (int j = 0; j < size; j++)
+			if (is_instance_data_in_matrix)
 			{
-				for (int k = 0; k < size; k++)
+				for (int j = 0; j < size; j++)
 				{
-					if (j == k) { matrix[j][k] = -1; continue; }
-
-					double xd = abs(coords[j][0] - coords[k][0]);
-					double yd = abs(coords[j][1] - coords[k][1]);
-
-					matrix[j][k] = nint(xd + yd);
+					for (int k = 0; k < size; k++)
+					{
+						matrix[j][k] = man_2d_distance(j, k);
+					}
 				}
-			}
 
-			for (int i = 0; i < size; i++) delete[] coords[i];
-			delete[] coords;
+				for (int i = 0; i < size; i++) delete[] coords[i];
+				delete[] coords;
+			}
 		}
 		else if (edge_weight_type == "MAN_3D")
 		{
-			double** coords = parse_coords(file, i, 3);
+			coords = parse_coords(file, i, 3);
+			coords_weight_type = CoordsWeightType::MAN_3D;
 
-			for (int j = 0; j < size; j++)
+			if (is_instance_data_in_matrix)
 			{
-				for (int k = 0; k < size; k++)
+				for (int j = 0; j < size; j++)
 				{
-					if (j == k) { matrix[j][k] = -1; continue; }
-
-					double xd = abs(coords[j][0] - coords[k][0]);
-					double yd = abs(coords[j][1] - coords[k][1]);
-					double zd = abs(coords[j][2] - coords[k][2]);
-
-					matrix[j][k] = nint(xd + yd + zd);
+					for (int k = 0; k < size; k++)
+					{
+						matrix[j][k] = man_3d_distance(j, k);
+					}
 				}
-			}
 
-			for (int i = 0; i < size; i++) delete[] coords[i];
-			delete[] coords;
+				for (int i = 0; i < size; i++) delete[] coords[i];
+				delete[] coords;
+			}
 		}
 		else if (edge_weight_type == "CEIL_2D")
 		{
-			double** coords = parse_coords(file, i, 2);
+			coords = parse_coords(file, i, 2);
+			coords_weight_type = CoordsWeightType::CEIL_2D;
 
-			for (int j = 0; j < size; j++)
+			if (is_instance_data_in_matrix)
 			{
-				for (int k = 0; k < size; k++)
+				for (int j = 0; j < size; j++)
 				{
-					if (j == k) { matrix[j][k] = -1; continue; }
-
-					double xd = coords[j][0] - coords[k][0];
-					double yd = coords[j][1] - coords[k][1];
-
-					matrix[j][k] = (int)ceil(sqrt(xd * xd + yd * yd));
+					for (int k = 0; k < size; k++)
+					{
+						matrix[j][k] = ceil_2d_distance(j, k);
+					}
 				}
-			}
 
-			for (int i = 0; i < size; i++) delete[] coords[i];
-			delete[] coords;
+				for (int i = 0; i < size; i++) delete[] coords[i];
+				delete[] coords;
+			}
 		}
 		else if (edge_weight_type == "GEO")
 		{
-			double** coords = parse_coords(file, i, 2);
+			coords = parse_coords(file, i, 2);
+			coords_weight_type = CoordsWeightType::GEO;
 
-			double* latitude = new double[size];
-			double* longitude = new double[size];
-
-			double PI = 3.141592;
-			double RRR = 6378.388;
-
-			//Convert to radians
-			for (int j = 0; j < size; j++)
+			if (is_instance_data_in_matrix)
 			{
-				double deg = (int)(coords[j][0]);
-				double min = coords[j][0] - deg;
-				latitude[j] = PI * (deg + 5.0 * min / 3.0) / 180.0;
-				deg = (int)(coords[j][1]);
-				min = coords[j][1] - deg;
-				longitude[j] = PI * (deg + 5.0 * min / 3.0) / 180.0;
-			}
-
-			//Calculate distance
-			for (int j = 0; j < size; j++)
-			{
-				for (int k = 0; k < size; k++)
+				for (int j = 0; j < size; j++)
 				{
-					if (j == k) { matrix[j][k] = -1; continue; }
-
-					double q1 = cos(longitude[j] - longitude[k]);
-					double q2 = cos(latitude[j] - latitude[k]);
-					double q3 = cos(latitude[j] + latitude[k]);
-
-					matrix[j][k] = (int)(RRR * acos(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3)) + 1.0);
+					for (int k = 0; k < size; k++)
+					{
+						matrix[j][k] = geo_distance(j, k);
+					}
 				}
+				delete[] coords;
 			}
-
-			for (int i = 0; i < size; i++) delete[] coords[i];
-			delete[] coords;
-			delete[] latitude;
-			delete[] longitude;
 		}
 		else if (edge_weight_type == "ATT")
 		{
-			double** coords = parse_coords(file, i, 2);
+			coords = parse_coords(file, i, 2);
+			coords_weight_type = CoordsWeightType::ATT;
 
-			for (int j = 0; j < size; j++)
+			if (is_instance_data_in_matrix)
 			{
-				for (int k = 0; k < size; k++)
+				for (int j = 0; j < size; j++)
 				{
-					if (j == k) { matrix[j][k] = -1; continue; }
-
-					double xd = coords[j][0] - coords[k][0];
-					double yd = coords[j][1] - coords[k][1];
-					double r = sqrt((xd * xd + yd * yd) / 10.0);
-					int t = nint(r);
-					
-					matrix[j][k] = t < r ? t + 1 : t;
+					for (int k = 0; k < size; k++)
+					{
+						matrix[j][k] = att_distance(j, k);
+					}
 				}
-			}
 
-			for (int i = 0; i < size; i++) delete[] coords[i];
-			delete[] coords;
+				for (int i = 0; i < size; i++) delete[] coords[i];
+				delete[] coords;
+			}
 		}
 		else
 		{
 			cout << "Edge weight type \"" << edge_weight_type << "\" is not supported." << "\r\n";
+			coords_weight_type = CoordsWeightType::COORDS_UNDEFINED;
 		}
 	}
 
@@ -372,14 +345,37 @@ Instance::~Instance()
 {
 	if (size > 0)
 	{
-		for (int i = 0; i < size; i++) delete[] matrix[i];
-		delete[] matrix;
+		if (is_instance_data_in_matrix)
+		{
+			for (int i = 0; i < size; i++) delete[] matrix[i];
+			delete[] matrix;
+		}
+		else
+		{
+			for (int i = 0; i < size; i++) delete[] coords[i];
+			delete[] coords;
+		}
 	}
 }
 
 int Instance::edge_weight(int from, int to)
 {
-	return matrix[from][to];
+	if (is_instance_data_in_matrix)	return matrix[from][to];
+
+	switch (coords_weight_type)
+	{
+		case CoordsWeightType::EUC_2D: { return euc_2d_distance(from, to); }
+		case CoordsWeightType::EUC_3D: { return euc_3d_distance(from, to); }
+		case CoordsWeightType::MAX_2D: { return max_2d_distance(from, to); }
+		case CoordsWeightType::MAX_3D: { return max_3d_distance(from, to); }
+		case CoordsWeightType::MAN_2D: { return man_2d_distance(from, to); }
+		case CoordsWeightType::MAN_3D: { return man_3d_distance(from, to); }
+		case CoordsWeightType::CEIL_2D: { return ceil_2d_distance(from, to); }
+		case CoordsWeightType::GEO: { return geo_distance(from, to); }
+		case CoordsWeightType::ATT: { return att_distance(from, to); }
+		case CoordsWeightType::COORDS_UNDEFINED: { return -1; }
+		default: return -1;
+	}
 }
 
 void Instance::display()
@@ -450,5 +446,128 @@ void Instance::load_optimal_tour_length(string filename)
 
 	string line;
 	getline(f, line);
-	StringFunctions::to_int(line, &optimal_tour_length);
+	StringFunctions::to_int64(line, &optimal_tour_length);
+}
+
+int Instance::euc_2d_distance(int from_city, int to_city)
+{
+	if (from_city == to_city) return -1;
+
+	double xd = coords[from_city][0] - coords[to_city][0];
+	double yd = coords[from_city][1] - coords[to_city][1];
+
+	return nint(sqrt(xd * xd + yd * yd));
+}
+
+int Instance::euc_3d_distance(int from_city, int to_city)
+{
+	if (from_city == to_city) return -1;
+
+	double xd = coords[from_city][0] - coords[to_city][0];
+	double yd = coords[from_city][1] - coords[to_city][1];
+	double zd = coords[from_city][2] - coords[to_city][2];
+
+	return nint(sqrt(xd * xd + yd * yd + zd * zd));
+}
+
+int Instance::max_2d_distance(int from_city, int to_city)
+{
+	if (from_city == to_city) return -1;
+
+	double xd = abs(coords[from_city][0] - coords[to_city][0]);
+	double yd = abs(coords[from_city][1] - coords[to_city][1]);
+
+	return max(nint(xd), nint(yd));
+}
+
+int Instance::max_3d_distance(int from_city, int to_city)
+{
+	if (from_city == to_city) return -1;
+
+	double xd = abs(coords[from_city][0] - coords[to_city][0]);
+	double yd = abs(coords[from_city][1] - coords[to_city][1]);
+	double zd = abs(coords[from_city][2] - coords[to_city][2]);
+
+	return max(nint(xd), nint(yd), nint(zd));
+}
+
+int Instance::man_2d_distance(int from_city, int to_city)
+{
+	if (from_city == to_city) return -1;
+
+	double xd = abs(coords[from_city][0] - coords[to_city][0]);
+	double yd = abs(coords[from_city][1] - coords[to_city][1]);
+
+	return nint(xd + yd);
+}
+
+int Instance::man_3d_distance(int from_city, int to_city)
+{
+	if (from_city == to_city) return -1;
+
+	double xd = abs(coords[from_city][0] - coords[to_city][0]);
+	double yd = abs(coords[from_city][1] - coords[to_city][1]);
+	double zd = abs(coords[from_city][2] - coords[to_city][2]);
+
+	return nint(xd + yd + zd);
+}
+
+int Instance::ceil_2d_distance(int from_city, int to_city)
+{
+	if (from_city == to_city) return -1;
+
+	double xd = coords[from_city][0] - coords[to_city][0];
+	double yd = coords[from_city][1] - coords[to_city][1];
+
+	return (int)ceil(sqrt(xd * xd + yd * yd));
+}
+
+int Instance::geo_distance(int from_city, int to_city)
+{
+	if (from_city == to_city) return -1;
+
+	double latitude_from;
+	double latitude_to;
+	double longitude_from;
+	double longitude_to;
+
+	double PI = 3.141592;
+	double RRR = 6378.388;
+
+	//Convert to radians
+	double deg;
+	double min;
+
+	deg = (int)(coords[from_city][0]);
+	min = coords[from_city][0] - deg;
+	latitude_from = PI * (deg + 5.0 * min / 3.0) / 180.0;
+	deg = (int)(coords[from_city][1]);
+	min = coords[from_city][1] - deg;
+	longitude_from = PI * (deg + 5.0 * min / 3.0) / 180.0;
+
+	deg = (int)(coords[to_city][0]);
+	min = coords[to_city][0] - deg;
+	latitude_to = PI * (deg + 5.0 * min / 3.0) / 180.0;
+	deg = (int)(coords[to_city][1]);
+	min = coords[to_city][1] - deg;
+	longitude_to = PI * (deg + 5.0 * min / 3.0) / 180.0;
+
+	//Calculate distance
+	double q1 = cos(longitude_from - longitude_to);
+	double q2 = cos(latitude_from - latitude_to);
+	double q3 = cos(latitude_from + latitude_to);
+	
+	return (int)(RRR * acos(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3)) + 1.0);
+}
+
+int Instance::att_distance(int from_city, int to_city)
+{
+	if (from_city == to_city) return -1;
+
+	double xd = coords[from_city][0] - coords[to_city][0];
+	double yd = coords[from_city][1] - coords[to_city][1];
+	double r = sqrt((xd * xd + yd * yd) / 10.0);
+	int t = nint(r);
+
+	return t < r ? t + 1 : t;
 }
