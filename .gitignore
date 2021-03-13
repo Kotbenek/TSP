@@ -338,3 +338,8 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+#Instances and  optimal tour length files
+!TSP/instances/*.opt
+!TSP/instances/*.tsp
+!TSP/instances/*.atsp
