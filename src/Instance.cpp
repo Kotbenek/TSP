@@ -1,5 +1,7 @@
 #include "Instance.h"
 
+#include <cmath>
+
 Instance::Instance(string filename, bool parse_data_to_matrix)
 {
 	//Specification variables

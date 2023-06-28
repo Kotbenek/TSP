@@ -1,5 +1,7 @@
 #include "Random.h"
 
+#include <algorithm>
+
 bool Random::is_initialised = false;
 mt19937 Random::mersenne_twister;
 
