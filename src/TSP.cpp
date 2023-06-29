@@ -114,7 +114,7 @@ int main(int argc, char** argv)
                     cout << "Bad argument t2: \"" << t2 << "\"." << "\r\n";
                     continue;
                 }
-                
+
                 if (!StringFunctions::to_int(el, &epoch_length) || epoch_length <= 0)
                 {
                     cout << "Bad argument el: \"" << el << "\"." << "\r\n";
@@ -143,7 +143,7 @@ int main(int argc, char** argv)
                 cout << "   nt: " << nt << "\r\n";
                 cout << "\r\n";
 
-                Algorithms::simulated_annealing(instance, T_start, T_end, epoch_length, cooling_factor, neighbourhood_type);                
+                Algorithms::simulated_annealing(instance, T_start, T_end, epoch_length, cooling_factor, neighbourhood_type);
             }
             else if (arg == "-ga")
             {

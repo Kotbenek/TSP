@@ -55,7 +55,7 @@ Instance::Instance(string filename, bool parse_data_to_matrix)
 				if (s.length() > 0) file.push_back(s);
 			}
 		}
-	}	
+	}
 
 	for (int i = 0; i < file.size(); i++)
 	{
@@ -75,7 +75,7 @@ Instance::Instance(string filename, bool parse_data_to_matrix)
 		//Create matrix
 		matrix = new int* [size];
 		for (int i = 0; i < size; i++) matrix[i] = new int[size];
-	}	
+	}
 
 	//Display instance information
 	cout << "Instance: " << name << "\r\n";
@@ -89,7 +89,7 @@ Instance::Instance(string filename, bool parse_data_to_matrix)
 	{
 		//Storing explicit-type instances as coords is not possible
 		if (!is_instance_data_in_matrix) { cout << "Explicit-type instances cannot be stored as coords." << "\r\n"; size = -1; return; }
-	
+
 		//Move to the data section
 		int i = data_start;
 		while (i < file.size() && file[i] != "EDGE_WEIGHT_SECTION") i++;
@@ -155,7 +155,7 @@ Instance::Instance(string filename, bool parse_data_to_matrix)
 					i++;
 				}
 			}
-		}				
+		}
 	}
 	else
 	{
@@ -163,7 +163,7 @@ Instance::Instance(string filename, bool parse_data_to_matrix)
 		int i = data_start;
 		while (i < file.size() && file[i] != "NODE_COORD_SECTION") i++;
 		i++;
-		
+
 		if (edge_weight_type == "EUC_2D")
 		{
 			coords = parse_coords(file, i, 2);
@@ -558,7 +558,7 @@ int Instance::geo_distance(int from_city, int to_city)
 	double q1 = cos(longitude_from - longitude_to);
 	double q2 = cos(latitude_from - latitude_to);
 	double q3 = cos(latitude_from + latitude_to);
-	
+
 	return (int)(RRR * acos(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3)) + 1.0);
 }
 

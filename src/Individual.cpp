@@ -42,7 +42,7 @@ Individual** Individual::crossover_OX(Individual* i1, Individual* i2, int size)
 	//Available cities (1 - available, 0 - already used)
 	int* available_1 = new int[size];
 	int* available_2 = new int[size];
-	
+
 	fill(&available_1[0], &available_1[size], 1);
 	fill(&available_2[0], &available_2[size], 1);
 
@@ -58,7 +58,7 @@ Individual** Individual::crossover_OX(Individual* i1, Individual* i2, int size)
 	int new_2_index = k2;
 
 	do
-	{		
+	{
 		if (available_1[i1->tour[index]] != 0)
 		{
 			available_1[i1->tour[index]] = 0;

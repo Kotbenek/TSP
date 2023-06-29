@@ -20,7 +20,7 @@ void Random::init()
 		delete[] seed;
 
 		mersenne_twister = mt;
-    }    
+    }
 }
 
 int Random::next(int max)

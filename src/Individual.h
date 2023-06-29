@@ -12,7 +12,7 @@ public:
 	static Individual* clone(Individual* individual, int size);
 
 	static Individual** crossover_OX(Individual* i1, Individual* i2, int size);
-		
+
 	static void quicksort_desc(Individual** a, int l, int h);
 
 private:

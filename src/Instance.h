@@ -16,7 +16,7 @@ class Instance
 public:
 	int size = -1;
 	int64_t optimal_tour_length = -1;
-	
+
 	Instance(string filename, bool parse_data_to_matrix);
 	~Instance();
 	int edge_weight(int from, int to);

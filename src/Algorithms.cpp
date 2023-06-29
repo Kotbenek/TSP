@@ -19,7 +19,7 @@ int* Algorithms::greedy(Instance* instance, int start, bool display)
 		}
 	}
 
-	int unvisited_size = instance->size - 1;	
+	int unvisited_size = instance->size - 1;
 	int current_location = start;
 
 	//While there are cities to visit
@@ -47,7 +47,6 @@ int* Algorithms::greedy(Instance* instance, int start, bool display)
 		//Remove visited city from the unvisited cities array
 		unvisited_size--;
 		swap(unvisited[closest], unvisited[unvisited_size]);
-		
 	}
 
 	if (display) display_tour(compute_tour_length(instance, tour), instance->optimal_tour_length, tour, instance->size);
@@ -75,7 +74,7 @@ void Algorithms::repetitive_greedy(Instance* instance)
 		if (tour_length < best_tour_length)
 		{
 			copy(&tour[0], &tour[instance->size], best_tour);
-			
+
 			best_tour_length = tour_length;
 		}
 
@@ -109,7 +108,7 @@ void Algorithms::simulated_annealing(Instance* instance, double T_start, double 
 {
 	int* tour = generate_random_tour(instance->size);
 	int64_t tour_length = compute_tour_length(instance, tour);
-	
+
 	//Temperature
 	double T = T_start;
 
@@ -129,7 +128,7 @@ void Algorithms::simulated_annealing(Instance* instance, double T_start, double 
 		for (int i = 0; i < epoch_length; i++)
 		{
 			//Get neighbour from tour neighbourhood
-			copy(&tour[0], &tour[instance->size], new_tour);			
+			copy(&tour[0], &tour[instance->size], new_tour);
 			neighbourhood_type(new_tour, Random::next(instance->size - 1), Random::next(instance->size - 1));
 			new_tour_length = compute_tour_length(instance, new_tour);
 
@@ -238,7 +237,7 @@ void Algorithms::genetic(Instance* instance, int population_size, int max_iterat
 			parents[individuals_picked] = population_picker[i * tournament_participants_size + best];
 			individuals_picked++;
 		}
-		
+
 		//Crossover
 		Individual** population_with_children = new Individual * [population_with_children_size];
 
@@ -309,7 +308,7 @@ void Algorithms::genetic(Instance* instance, int population_size, int max_iterat
 			iterations_with_no_improvement = 0;
 			display_tour_length(best_individual_tour_length, instance->optimal_tour_length);
 		}
-		else iterations_with_no_improvement++;		
+		else iterations_with_no_improvement++;
 	}
 
 	display_tour(best_individual_tour_length, instance->optimal_tour_length, best_individual->tour, instance->size);
@@ -445,11 +444,10 @@ int* Algorithms::generate_random_tour(int size)
 
 void Algorithms::random_shuffle_array(int* a, int size)
 {
-	for (int i = size - 1; i > 0; i--) swap(a[i], a[Random::next(i)]);	
+	for (int i = size - 1; i > 0; i--) swap(a[i], a[Random::next(i)]);
 }
 
 void Algorithms::calculate_fitness(Individual* individual, Instance* instance)
 {
 	individual->fitness = 1000000.0 / (double)compute_tour_length(instance, individual->tour);
 }
-
