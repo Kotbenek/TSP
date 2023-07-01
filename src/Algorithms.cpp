@@ -46,7 +46,7 @@ int* Algorithms::greedy(Instance* instance, int start, bool display)
 
 		//Remove visited city from the unvisited cities array
 		unvisited_size--;
-		swap(unvisited[closest], unvisited[unvisited_size]);
+		std::swap(unvisited[closest], unvisited[unvisited_size]);
 	}
 
 	if (display) display_tour(compute_tour_length(instance, tour), instance->optimal_tour_length, tour, instance->size);
@@ -73,7 +73,7 @@ void Algorithms::repetitive_greedy(Instance* instance)
 
 		if (tour_length < best_tour_length)
 		{
-			copy(&tour[0], &tour[instance->size], best_tour);
+			std::copy(&tour[0], &tour[instance->size], best_tour);
 
 			best_tour_length = tour_length;
 		}
@@ -118,7 +118,7 @@ void Algorithms::simulated_annealing(Instance* instance, double T_start, double 
 	int64_t new_tour_length;
 
 	int* best_tour = new int[instance->size];
-	copy(&tour[0], &tour[instance->size], best_tour);
+	std::copy(&tour[0], &tour[instance->size], best_tour);
 	int64_t best_tour_length = tour_length;
 
 	//While the temperature is higher than minimal temperature
@@ -128,7 +128,7 @@ void Algorithms::simulated_annealing(Instance* instance, double T_start, double 
 		for (int i = 0; i < epoch_length; i++)
 		{
 			//Get neighbour from tour neighbourhood
-			copy(&tour[0], &tour[instance->size], new_tour);
+			std::copy(&tour[0], &tour[instance->size], new_tour);
 			neighbourhood_type(new_tour, Random::next(instance->size - 1), Random::next(instance->size - 1));
 			new_tour_length = compute_tour_length(instance, new_tour);
 
@@ -138,14 +138,14 @@ void Algorithms::simulated_annealing(Instance* instance, double T_start, double 
 			if (delta < 0)
 			{
 				//Store new tour
-				copy(&new_tour[0], &new_tour[instance->size], tour);
+				std::copy(&new_tour[0], &new_tour[instance->size], tour);
 				tour_length = new_tour_length;
 
 				//If new tour is better than the best found tour
 				if (new_tour_length < best_tour_length)
 				{
 					//Store new tour
-					copy(&new_tour[0], &new_tour[instance->size], best_tour);
+					std::copy(&new_tour[0], &new_tour[instance->size], best_tour);
 					best_tour_length = new_tour_length;
 
 					display_tour_length(best_tour_length, instance->optimal_tour_length);
@@ -158,7 +158,7 @@ void Algorithms::simulated_annealing(Instance* instance, double T_start, double 
 
 				if (p < exp(-delta / T))
 				{
-					copy(&new_tour[0], &new_tour[instance->size], tour);
+					std::copy(&new_tour[0], &new_tour[instance->size], tour);
 					tour_length = new_tour_length;
 				}
 			}
@@ -220,7 +220,7 @@ void Algorithms::genetic(Instance* instance, int population_size, int max_iterat
 		int* parents = new int[parents_size];
 		int* population_picker = new int[population_size];
 		int individuals_picked = 0;
-		copy(&population_picker_template[0], &population_picker_template[population_size], population_picker);
+		std::copy(&population_picker_template[0], &population_picker_template[population_size], population_picker);
 		random_shuffle_array(population_picker, population_size);
 		for (int i = 0; i < parents_size; i++)
 		{
@@ -241,7 +241,7 @@ void Algorithms::genetic(Instance* instance, int population_size, int max_iterat
 		//Crossover
 		Individual** population_with_children = new Individual * [population_with_children_size];
 
-		copy(&population[0], &population[population_size], population_with_children);
+		std::copy(&population[0], &population[population_size], population_with_children);
 
 		for (int i = 0; i < parents_size; i++)
 		{
@@ -291,7 +291,7 @@ void Algorithms::genetic(Instance* instance, int population_size, int max_iterat
 		Individual::quicksort_desc(population_with_children, 0, population_with_children_size - 1);
 
 		//Make new population
-		copy(&population_with_children[0], &population_with_children[population_size], population);
+		std::copy(&population_with_children[0], &population_with_children[population_size], population);
 
 		//Delete unused individuals
 		for (int i = population_size; i < population_with_children_size; i++) delete population_with_children[i];
@@ -322,16 +322,16 @@ void Algorithms::genetic(Instance* instance, int population_size, int max_iterat
 
 void Algorithms::neighbour_swap(int* tour, int i1, int i2)
 {
-	swap(tour[i1], tour[i2]);
+	std::swap(tour[i1], tour[i2]);
 }
 
 void Algorithms::neighbour_invert(int* tour, int i1, int i2)
 {
-	if (i1 > i2) swap(i1, i2);
+	if (i1 > i2) std::swap(i1, i2);
 
 	while (i1 < i2)
 	{
-		swap(tour[i1], tour[i2]);
+		std::swap(tour[i1], tour[i2]);
 		i1++;
 		i2--;
 	}
@@ -339,10 +339,10 @@ void Algorithms::neighbour_invert(int* tour, int i1, int i2)
 
 void Algorithms::neighbour_insert(int* tour, int i1, int i2)
 {
-	if (i1 > i2) swap(i1, i2);
+	if (i1 > i2) std::swap(i1, i2);
 
 	int temp = tour[i2];
-	copy(&tour[i1], &tour[i2], &tour[i1 + 1]);
+	std::copy(&tour[i1], &tour[i2], &tour[i1 + 1]);
 	tour[i1] = temp;
 }
 
@@ -365,28 +365,28 @@ int64_t Algorithms::compute_tour_length(Instance* instance, int* tour)
 void Algorithms::display_tour_length(int64_t tour_length, int64_t optimal_tour_length)
 {
 	//Save cout flags
-	ios_base::fmtflags f(cout.flags());
+	std::ios_base::fmtflags f(std::cout.flags());
 
-	cout << tour_length;
-	if (optimal_tour_length > -1) cout << " (" << fixed << setprecision(2) << (100.0 * tour_length / optimal_tour_length) << "%)";
-	cout << "\r\n";
+	std::cout << tour_length;
+	if (optimal_tour_length > -1) std::cout << " (" << std::fixed << std::setprecision(2) << (100.0 * tour_length / optimal_tour_length) << "%)";
+	std::cout << "\r\n";
 
 	//Restore cout flags
-	cout.flags(f);
+	std::cout.flags(f);
 }
 
 void Algorithms::display_tour(int64_t tour_length, int64_t optimal_tour_length, int* tour, int size)
 {
-	cout << "Tour: ";
+	std::cout << "Tour: ";
 	for (int i = 0; i < size - 1; i++)
 	{
-		cout << tour[i] + 1 << " ";
+		std::cout << tour[i] + 1 << " ";
 	}
-	cout << tour[size - 1] + 1 << "\r\n";
+	std::cout << tour[size - 1] + 1 << "\r\n";
 
-	cout << "Tour length: ";
+	std::cout << "Tour length: ";
 	display_tour_length(tour_length, optimal_tour_length);
-	cout << "\r\n";
+	std::cout << "\r\n";
 }
 
 void Algorithms::permute(Instance* instance, int* a, int l, int r, int64_t* best_tour_length, int* best_tour)
@@ -401,7 +401,7 @@ void Algorithms::permute(Instance* instance, int* a, int l, int r, int64_t* best
 		{
 			//Store generated permutation
 			*best_tour_length = tour_length;
-			copy(&a[0], &a[instance->size], best_tour);
+			std::copy(&a[0], &a[instance->size], best_tour);
 
 			display_tour_length(tour_length, instance->optimal_tour_length);
 		}
@@ -411,9 +411,9 @@ void Algorithms::permute(Instance* instance, int* a, int l, int r, int64_t* best
 		//Generate permutations
 		for (int i = l; i < r; i++)
 		{
-			swap(a[l], a[i]);
+			std::swap(a[l], a[i]);
 			permute(instance, a, l + 1, r, best_tour_length, best_tour);
-			swap(a[l], a[i]);
+			std::swap(a[l], a[i]);
 		}
 	}
 }
@@ -434,7 +434,7 @@ int* Algorithms::generate_random_tour(int size)
 
 		//Remove visited city from the unvisited cities array
 		unvisited_size--;
-		swap(unvisited[index], unvisited[unvisited_size]);
+		std::swap(unvisited[index], unvisited[unvisited_size]);
 	}
 
 	delete[] unvisited;
@@ -444,7 +444,7 @@ int* Algorithms::generate_random_tour(int size)
 
 void Algorithms::random_shuffle_array(int* a, int size)
 {
-	for (int i = size - 1; i > 0; i--) swap(a[i], a[Random::next(i)]);
+	for (int i = size - 1; i > 0; i--) std::swap(a[i], a[Random::next(i)]);
 }
 
 void Algorithms::calculate_fitness(Individual* individual, Instance* instance)

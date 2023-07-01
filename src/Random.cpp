@@ -3,7 +3,7 @@
 #include <algorithm>
 
 bool Random::is_initialised = false;
-mt19937 Random::mersenne_twister;
+std::mt19937 Random::mersenne_twister;
 
 void Random::init()
 {
@@ -11,11 +11,11 @@ void Random::init()
     {
         is_initialised = true;
 
-		random_device source;
-		int* seed = new int[mt19937::state_size];
-		generate(&seed[0], &seed[mt19937::state_size], ref(source));
-		seed_seq seq(&seed[0], &seed[mt19937::state_size]);
-		mt19937 mt(seq);
+		std::random_device source;
+		int* seed = new int[std::mt19937::state_size];
+		std::generate(&seed[0], &seed[std::mt19937::state_size], ref(source));
+		std::seed_seq seq(&seed[0], &seed[std::mt19937::state_size]);
+		std::mt19937 mt(seq);
 
 		delete[] seed;
 
@@ -25,10 +25,10 @@ void Random::init()
 
 int Random::next(int max)
 {
-	return uniform_int_distribution<int>{0, max}(mersenne_twister);
+	return std::uniform_int_distribution<int>{0, max}(mersenne_twister);
 }
 
 double Random::next_double()
 {
-	return uniform_real_distribution<double>{0.0, 1.0}(mersenne_twister);
+	return std::uniform_real_distribution<double>{0.0, 1.0}(mersenne_twister);
 }

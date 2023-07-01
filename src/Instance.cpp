@@ -2,22 +2,22 @@
 
 #include <cmath>
 
-Instance::Instance(string filename, bool parse_data_to_matrix)
+Instance::Instance(std::string filename, bool parse_data_to_matrix)
 {
 	//Specification variables
-	string name;
-	string comment;
-	string type;
-	string dimension;
-	string edge_weight_type;
-	string edge_weight_format;
+	std::string name;
+	std::string comment;
+	std::string type;
+	std::string dimension;
+	std::string edge_weight_type;
+	std::string edge_weight_format;
 	int data_start = 0;
 
 	//Read the file
-	ifstream f(filename);
-	if (f.fail()) { cout << "Something went wrong while loading the file." << "\r\n"; return; }
-	string line;
-	vector<string> file;
+	std::ifstream f(filename);
+	if (f.fail()) { std::cout << "Something went wrong while loading the file." << "\r\n"; return; }
+	std::string line;
+	std::vector<std::string> file;
 
 	while (getline(f, line))
 	{
@@ -47,8 +47,8 @@ Instance::Instance(string filename, bool parse_data_to_matrix)
 		}
 		else
 		{
-			stringstream ss(line);
-			string s;
+			std::stringstream ss(line);
+			std::string s;
 
 			while (getline(ss, s, ' '))
 			{
@@ -65,7 +65,7 @@ Instance::Instance(string filename, bool parse_data_to_matrix)
 	//Store instance size
 	StringFunctions::to_int(dimension, &size);
 
-	if (size < 0) { cout << "Bad instance size. File is corrupted and/or not supported." << "\r\n"; return; }
+	if (size < 0) { std::cout << "Bad instance size. File is corrupted and/or not supported." << "\r\n"; return; }
 
 	//Store the information if instance data is stored as matrix or as coords
 	is_instance_data_in_matrix = parse_data_to_matrix;
@@ -78,17 +78,17 @@ Instance::Instance(string filename, bool parse_data_to_matrix)
 	}
 
 	//Display instance information
-	cout << "Instance: " << name << "\r\n";
-	cout << "Comment: " << comment << "\r\n";
-	cout << "Type: " << type << "\r\n";
-	cout << "Size: " << size << "\r\n";
-	cout << "\r\n";
+	std::cout << "Instance: " << name << "\r\n";
+	std::cout << "Comment: " << comment << "\r\n";
+	std::cout << "Type: " << type << "\r\n";
+	std::cout << "Size: " << size << "\r\n";
+	std::cout << "\r\n";
 
 	//Parse data
 	if (edge_weight_type == "EXPLICIT")
 	{
 		//Storing explicit-type instances as coords is not possible
-		if (!is_instance_data_in_matrix) { cout << "Explicit-type instances cannot be stored as coords." << "\r\n"; size = -1; return; }
+		if (!is_instance_data_in_matrix) { std::cout << "Explicit-type instances cannot be stored as coords." << "\r\n"; size = -1; return; }
 
 		//Move to the data section
 		int i = data_start;
@@ -335,7 +335,7 @@ Instance::Instance(string filename, bool parse_data_to_matrix)
 		}
 		else
 		{
-			cout << "Edge weight type \"" << edge_weight_type << "\" is not supported." << "\r\n";
+			std::cout << "Edge weight type \"" << edge_weight_type << "\" is not supported." << "\r\n";
 			coords_weight_type = CoordsWeightType::COORDS_UNDEFINED;
 		}
 	}
@@ -383,22 +383,22 @@ int Instance::edge_weight(int from, int to)
 void Instance::display()
 {
 	//Save cout flags
-	ios_base::fmtflags f(cout.flags());
+	std::ios_base::fmtflags f(std::cout.flags());
 
-	cout.fill(' ');
+	std::cout.fill(' ');
 
 	for (int i = 0; i < size; i++)
 	{
 		for (int j = 0; j < size; j++)
 		{
-			cout << setw(6) << edge_weight(i, j) << " ";
+			std::cout << std::setw(6) << edge_weight(i, j) << " ";
 		}
-		cout << "\r\n";
+		std::cout << "\r\n";
 	}
-	cout << "\r\n";
+	std::cout << "\r\n";
 
 	//Restore cout flags
-	cout.flags(f);
+	std::cout.flags(f);
 }
 
 int Instance::nint(double d)
@@ -406,7 +406,7 @@ int Instance::nint(double d)
 	return (int)(d + 0.5);
 }
 
-double** Instance::parse_coords(vector<string> file, int i, int dimensions)
+double** Instance::parse_coords(std::vector<std::string> file, int i, int dimensions)
 {
 	//Create 2D array for coords
 	double** coords = new double* [size];
@@ -439,14 +439,14 @@ int Instance::max(int i1, int i2, int i3)
 	return i1 > i2 ? i1 > i3 ? i1 : i2 : i2 > i3 ? i2 : i3;
 }
 
-void Instance::load_optimal_tour_length(string filename)
+void Instance::load_optimal_tour_length(std::string filename)
 {
 	//Check if the file with optimal path length exists
 	//If true, read the file and store the value
-	ifstream f(filename);
+	std::ifstream f(filename);
 	if (f.fail()) return;
 
-	string line;
+	std::string line;
 	getline(f, line);
 	StringFunctions::to_int64(line, &optimal_tour_length);
 }

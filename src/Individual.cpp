@@ -2,14 +2,12 @@
 #include "Random.h"
 #include <algorithm>
 
-using namespace std;
-
 Individual::Individual(int size, int* tour)
 {
 	this->tour = new int[size];
 	fitness = 0.0;
 
-	if (tour != 0) copy(&tour[0], &tour[size], this->tour);
+	if (tour != 0) std::copy(&tour[0], &tour[size], this->tour);
 }
 
 Individual::~Individual()
@@ -33,18 +31,18 @@ Individual** Individual::crossover_OX(Individual* i1, Individual* i2, int size)
 	int k1 = Random::next(size - 1);
 	int k2 = Random::next(size - 1);
 
-	if (k1 > k2) swap(k1, k2);
+	if (k1 > k2) std::swap(k1, k2);
 
 	//Inherit the section between k1 and k2
-	copy(&i2->tour[k1], &i2->tour[k2], &children[0]->tour[k1]);
-	copy(&i1->tour[k1], &i1->tour[k2], &children[1]->tour[k1]);
+	std::copy(&i2->tour[k1], &i2->tour[k2], &children[0]->tour[k1]);
+	std::copy(&i1->tour[k1], &i1->tour[k2], &children[1]->tour[k1]);
 
 	//Available cities (1 - available, 0 - already used)
 	int* available_1 = new int[size];
 	int* available_2 = new int[size];
 
-	fill(&available_1[0], &available_1[size], 1);
-	fill(&available_2[0], &available_2[size], 1);
+	std::fill(&available_1[0], &available_1[size], 1);
+	std::fill(&available_2[0], &available_2[size], 1);
 
 	for (int i = k1; i < k2; i++)
 	{
@@ -113,6 +111,6 @@ int Individual::partition(Individual** a, int l, int h)
 		} while (a[j]->fitness < pivot);
 
 		if (i >= j) return j;
-		swap(a[i], a[j]);
+		std::swap(a[i], a[j]);
 	}
 }

@@ -9,15 +9,13 @@
 #include "StringFunctions.h"
 #include "CoordsWeightType.h"
 
-using namespace std;
-
 class Instance
 {
 public:
 	int size = -1;
 	int64_t optimal_tour_length = -1;
 
-	Instance(string filename, bool parse_data_to_matrix);
+	Instance(std::string filename, bool parse_data_to_matrix);
 	~Instance();
 	int edge_weight(int from, int to);
 	void display();
@@ -30,10 +28,10 @@ private:
 	bool is_instance_data_in_matrix;
 
 	int nint(double d);
-	double** parse_coords(vector<string> file, int i, int dimensions);
+	double** parse_coords(std::vector<std::string> file, int i, int dimensions);
 	int max(int i1, int i2);
 	int max(int i1, int i2, int i3);
-	void load_optimal_tour_length(string filename);
+	void load_optimal_tour_length(std::string filename);
 
 	int euc_2d_distance(int from_city, int to_city);
 	int euc_3d_distance(int from_city, int to_city);
