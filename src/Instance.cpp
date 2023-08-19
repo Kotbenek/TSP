@@ -15,7 +15,7 @@ Instance::Instance(std::string filename, bool parse_data_to_matrix)
 
 	//Read the file
 	std::ifstream f(filename);
-	if (f.fail()) { std::cout << "Something went wrong while loading the file." << "\r\n"; return; }
+	if (f.fail()) { std::cout << "Something went wrong while loading the file.\n"; return; }
 	std::string line;
 	std::vector<std::string> file;
 
@@ -65,7 +65,7 @@ Instance::Instance(std::string filename, bool parse_data_to_matrix)
 	//Store instance size
 	StringFunctions::to_int(dimension, &size);
 
-	if (size < 0) { std::cout << "Bad instance size. File is corrupted and/or not supported." << "\r\n"; return; }
+	if (size < 0) { std::cout << "Bad instance size. File is corrupted and/or not supported.\n"; return; }
 
 	//Store the information if instance data is stored as matrix or as coords
 	is_instance_data_in_matrix = parse_data_to_matrix;
@@ -78,17 +78,17 @@ Instance::Instance(std::string filename, bool parse_data_to_matrix)
 	}
 
 	//Display instance information
-	std::cout << "Instance: " << name << "\r\n";
-	std::cout << "Comment: " << comment << "\r\n";
-	std::cout << "Type: " << type << "\r\n";
-	std::cout << "Size: " << size << "\r\n";
-	std::cout << "\r\n";
+	std::cout << "Instance: " << name << "\n"
+	          << "Comment: " << comment << "\n"
+	          << "Type: " << type << "\n"
+	          << "Size: " << size << "\n"
+	          << "\n";
 
 	//Parse data
 	if (edge_weight_type == "EXPLICIT")
 	{
 		//Storing explicit-type instances as coords is not possible
-		if (!is_instance_data_in_matrix) { std::cout << "Explicit-type instances cannot be stored as coords." << "\r\n"; size = -1; return; }
+		if (!is_instance_data_in_matrix) { std::cout << "Explicit-type instances cannot be stored as coords.\n"; size = -1; return; }
 
 		//Move to the data section
 		int i = data_start;
@@ -335,7 +335,7 @@ Instance::Instance(std::string filename, bool parse_data_to_matrix)
 		}
 		else
 		{
-			std::cout << "Edge weight type \"" << edge_weight_type << "\" is not supported." << "\r\n";
+			std::cout << "Edge weight type \"" << edge_weight_type << "\" is not supported.\n";
 			coords_weight_type = CoordsWeightType::COORDS_UNDEFINED;
 		}
 	}
@@ -393,9 +393,9 @@ void Instance::display()
 		{
 			std::cout << std::setw(6) << edge_weight(i, j) << " ";
 		}
-		std::cout << "\r\n";
+		std::cout << "\n";
 	}
-	std::cout << "\r\n";
+	std::cout << "\n";
 
 	//Restore cout flags
 	std::cout.flags(f);

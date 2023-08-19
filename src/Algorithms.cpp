@@ -369,7 +369,7 @@ void Algorithms::display_tour_length(int64_t tour_length, int64_t optimal_tour_l
 
 	std::cout << tour_length;
 	if (optimal_tour_length > -1) std::cout << " (" << std::fixed << std::setprecision(2) << (100.0 * tour_length / optimal_tour_length) << "%)";
-	std::cout << "\r\n";
+	std::cout << "\n";
 
 	//Restore cout flags
 	std::cout.flags(f);
@@ -382,11 +382,11 @@ void Algorithms::display_tour(int64_t tour_length, int64_t optimal_tour_length, 
 	{
 		std::cout << tour[i] + 1 << " ";
 	}
-	std::cout << tour[size - 1] + 1 << "\r\n";
+	std::cout << tour[size - 1] + 1 << "\n";
 
 	std::cout << "Tour length: ";
 	display_tour_length(tour_length, optimal_tour_length);
-	std::cout << "\r\n";
+	std::cout << "\n";
 }
 
 void Algorithms::permute(Instance* instance, int* a, int l, int r, int64_t* best_tour_length, int* best_tour)
