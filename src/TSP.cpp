@@ -1,3 +1,5 @@
+#include "TSP.h"
+
 #include "Instance.h"
 #include "Algorithms.h"
 #include "Random.h"
