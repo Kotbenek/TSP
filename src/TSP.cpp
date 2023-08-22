@@ -1,7 +1,7 @@
 #include "TSP.h"
 
-#include "Instance.h"
 #include "Algorithms.h"
+#include "Instance.h"
 #include "Random.h"
 
 int main(int argc, char** argv)
@@ -9,7 +9,8 @@ int main(int argc, char** argv)
     if (argc < 4)
     {
         std::cout << "\n"
-                     "Usage: TSP.exe [-d] [-gr] [-gr2] [-bf] [-sa t1 t2 el cf nt] [-ga ps mi mf cf pc] -f1|-f2 filename\n"
+                     "Usage: TSP.exe [-d] [-gr] [-gr2] [-bf] [-sa t1 t2 el cf nt] "
+                     "[-ga ps mi mf cf pc] -f1|-f2 filename\n"
                      "\n"
                      "Options:\n"
                      "    -d         Display the matrix\n"
@@ -39,7 +40,8 @@ int main(int argc, char** argv)
 
                      "File loading:\n"
                      "    -f1        Load the file as matrix (faster, but needs more memory)\n"
-                     "    -f2        Load the file as coords (slower, but needs very little memory)(not available for explicit-type instances)\n"
+                     "    -f2        Load the file as coords (slower, but needs very little "
+                     "memory)(not available for explicit-type instances)\n"
                      "    filename   Instance file in TSPLIB format\n";
     }
     else
@@ -49,19 +51,24 @@ int main(int argc, char** argv)
         std::string filename = argv[argc - 1];
         std::string file_loading = argv[argc - 2];
         Instance* instance;
-        if (file_loading == "-f1") instance = new Instance(filename, true);
-        else if (file_loading == "-f2") instance = new Instance(filename, false);
-        else { std::cout << "Bad argument -f1|-f2: \"" << file_loading << "\".\n"; return -1; }
-        if (instance->size == -1) return -1;
+        if (file_loading == "-f1")
+            instance = new Instance(filename, true);
+        else if (file_loading == "-f2")
+            instance = new Instance(filename, false);
+        else
+        {
+            std::cout << "Bad argument -f1|-f2: \"" << file_loading << "\".\n";
+            return -1;
+        }
+        if (instance->size == -1)
+            return -1;
 
         for (int i = 1; i < argc - 2; i++)
         {
             std::string arg = argv[i];
 
             if (arg == "-d")
-            {
                 instance->display();
-            }
             else if (arg == "-gr")
             {
                 std::cout << "Greedy\n";
@@ -118,15 +125,19 @@ int main(int argc, char** argv)
                     continue;
                 }
 
-                if (!StringFunctions::to_double(cf, &cooling_factor) || cooling_factor <= 0.0 || cooling_factor >= 1.0)
+                if (!StringFunctions::to_double(cf, &cooling_factor) || cooling_factor <= 0.0 ||
+                    cooling_factor >= 1.0)
                 {
                     std::cout << "Bad argument cf: \"" << cf << "\".\n";
                     continue;
                 }
 
-                if (nt == "swp") neighbourhood_type = &Algorithms::neighbour_swap;
-                else if (nt == "inv") neighbourhood_type = &Algorithms::neighbour_invert;
-                else if (nt == "ins") neighbourhood_type = &Algorithms::neighbour_insert;
+                if (nt == "swp")
+                    neighbourhood_type = &Algorithms::neighbour_swap;
+                else if (nt == "inv")
+                    neighbourhood_type = &Algorithms::neighbour_invert;
+                else if (nt == "ins")
+                    neighbourhood_type = &Algorithms::neighbour_insert;
                 else
                 {
                     std::cout << "Bad neighbourhood type \"" << nt << "\".\n";
@@ -140,7 +151,8 @@ int main(int argc, char** argv)
                           << "   nt: " << nt << "\n"
                           << "\n";
 
-                Algorithms::simulated_annealing(instance, T_start, T_end, epoch_length, cooling_factor, neighbourhood_type);
+                Algorithms::simulated_annealing(instance, T_start, T_end, epoch_length,
+                                                cooling_factor, neighbourhood_type);
             }
             else if (arg == "-ga")
             {
@@ -171,25 +183,30 @@ int main(int argc, char** argv)
                     continue;
                 }
 
-                if (!StringFunctions::to_int(mi, &max_iterations_with_no_improvement) || max_iterations_with_no_improvement <= 0)
+                if (!StringFunctions::to_int(mi, &max_iterations_with_no_improvement) ||
+                    max_iterations_with_no_improvement <= 0)
                 {
                     std::cout << "Bad argument mi: \"" << mi << "\".\n";
                     continue;
                 }
 
-                if (!StringFunctions::to_double(mf, &mutation_factor) || mutation_factor <= 0 || mutation_factor >= 1)
+                if (!StringFunctions::to_double(mf, &mutation_factor) || mutation_factor <= 0 ||
+                    mutation_factor >= 1)
                 {
                     std::cout << "Bad argument mf: \"" << mf << "\".\n";
                     continue;
                 }
 
-                if (!StringFunctions::to_double(cf, &crossover_factor) || crossover_factor <= 0 || crossover_factor >= 1)
+                if (!StringFunctions::to_double(cf, &crossover_factor) || crossover_factor <= 0 ||
+                    crossover_factor >= 1)
                 {
                     std::cout << "Bad argument cf: \"" << cf << "\".\n";
                     continue;
                 }
 
-                if (!StringFunctions::to_int(pc, &percentage_of_population_to_crossover) || percentage_of_population_to_crossover < 1 || percentage_of_population_to_crossover > 100)
+                if (!StringFunctions::to_int(pc, &percentage_of_population_to_crossover) ||
+                    percentage_of_population_to_crossover < 1 ||
+                    percentage_of_population_to_crossover > 100)
                 {
                     std::cout << "Bad argument pc: \"" << pc << "\".\n";
                     continue;
@@ -202,12 +219,12 @@ int main(int argc, char** argv)
                           << "   pc: " << percentage_of_population_to_crossover << "\n"
                           << "\n";
 
-                Algorithms::genetic(instance, population_size, max_iterations_with_no_improvement, mutation_factor, crossover_factor, percentage_of_population_to_crossover);
+                Algorithms::genetic(instance, population_size, max_iterations_with_no_improvement,
+                                    mutation_factor, crossover_factor,
+                                    percentage_of_population_to_crossover);
             }
             else
-            {
                 std::cout << "Incorrect argument \"" << arg << "\"\n";
-            }
         }
 
         delete instance;

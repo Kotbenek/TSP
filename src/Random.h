@@ -4,11 +4,11 @@
 class Random
 {
 public:
-	static void init();
-	static int next(int max);
-	static double next_double();
+    static void init();
+    static int next(int max);
+    static double next_double();
 
 private:
-	static std::mt19937 mersenne_twister;
-	static bool is_initialised;
+    static std::mt19937 mersenne_twister;
+    static bool is_initialised;
 };
